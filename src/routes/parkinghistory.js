@@ -1,5 +1,4 @@
-/* Do Khanh Trinh */
-/* Lich su gui xe */
+/* Khanh Trinh */
 
 
 import React, { useState } from 'react'

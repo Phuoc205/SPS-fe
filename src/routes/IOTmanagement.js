@@ -1,13 +1,12 @@
 /* Minh Duc */
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-const UserManagement = () => {
+const IOTManagement = () => {
     // Code here
     return (
-        <div>UserManagement</div>
+        <div>IOTManagement</div>
     )
 };
 
-export default UserManagement
+export default IOTManagement

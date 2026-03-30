@@ -1,21 +1,19 @@
-/* Hung */
-/* Chi tiet bai xe: */
+/* Duc Huy */
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import '../css/parkinglot.css'
+import Header from "../components/header"
 import Footer from "../components/footer"
-import Header from '../components/header';
 
-const ParkingLot = () => {
+const ManualGateControl = () => {
     // Code here
     return (
         <div>
             <Header/>
-            ParkingLot
+            ManualGateControl
             <Footer/>
         </div>
     )
 };
 
-export default ParkingLot
+export default ManualGateControl

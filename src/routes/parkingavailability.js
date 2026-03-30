@@ -1,20 +1,19 @@
-/* Duc Huy */
-/* Tra cuu ve */
+/* Hai Minh */
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Header from "../components/header"
 import Footer from "../components/footer"
 
-const TicketLookup = () => {
+const ParkingAvailability = () => {
     // Code here
     return (
         <div>
             <Header/>
-            TicketLookup
+            TicketValidate
             <Footer/>
         </div>
     )
 };
 
-export default TicketLookup
+export default ParkingAvailability

@@ -1,11 +1,24 @@
 /* Long Thanh */
+<<<<<<< HEAD:FE-SPS/src/routes/configprice.js
+=======
 /* Xay dung dashboard cho du an */
+>>>>>>> main:FE-SPS/src/routes/dashboard.js
 
 import React, { useState, useEffect } from 'react';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import '../css/dashboard.css';
 
+<<<<<<< HEAD:FE-SPS/src/routes/configprice.js
+const ConfigPrice = () => {
+    // Code here
+    return (
+        <div>ConfigPrice</div>
+    )
+};
+
+export default ConfigPrice
+=======
 const Dashboard = () => {
     const [stats, setStats] = useState({
         totalSlots: 0, 
@@ -68,3 +81,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+>>>>>>> main:FE-SPS/src/routes/dashboard.js
