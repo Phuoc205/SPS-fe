@@ -1,0 +1,175 @@
+.revenue-report-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: linear-gradient(180deg, #f6f8fb 0%, #eef3f8 100%);
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2937;
+  box-sizing: border-box;
+}
+
+.revenue-report-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.revenue-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.revenue-report-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.revenue-report-subtitle {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.revenue-report-refresh-btn {
+  border: none;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.revenue-report-refresh-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+}
+
+.revenue-report-refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.revenue-report-alert {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.revenue-report-alert-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.revenue-report-alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.revenue-report-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.revenue-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.revenue-report-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.revenue-report-card-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.revenue-report-card-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.revenue-report-card-subtext {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.revenue-report-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  margin-bottom: 20px;
+}
+
+.revenue-report-panel-title {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.revenue-report-panel-text {
+  margin: 8px 0;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.revenue-report-note {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.revenue-report-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #374151;
+  line-height: 1.8;
+}
+
+.revenue-report-list li + li {
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .revenue-report-page {
+    padding: 20px;
+  }
+
+  .revenue-report-title {
+    font-size: 24px;
+  }
+
+  .revenue-report-card-value {
+    font-size: 24px;
+  }
+}

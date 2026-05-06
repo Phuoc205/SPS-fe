@@ -1,0 +1,391 @@
+/* configprice.css */
+
+
+.configprice-page {
+    position: relative;
+    min-height: calc(100vh - 70px); /*  chiều cao tối thiểu của trang */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 56px 24px;             /* khoảng cách trên/dưới trang */
+
+    background-image: url('https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;   
+}
+
+/* Overlay tối + blur để chữ/card nổi bật */
+.configprice-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /*  thay độ tối của overlay */
+    background: linear-gradient(
+        160deg,
+        rgba(7, 11, 30, 0.72) 0%,
+        rgba(10, 20, 50, 0.65) 100%
+    );
+    backdrop-filter: blur(1.5px);
+    pointer-events: none;
+}
+
+/* chieu dài + rộng tong the cua table */
+.configprice-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1060px;  /* size table */
+}
+
+/* bảng chính  */
+.configprice-box {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 24px;            /* bo góc */ 
+    padding: 44px 52px;             /*  tăng để table rộng hơn */
+    box-shadow:
+        0 32px 80px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(255,255,255,0.06);
+    animation: cpFadeIn 0.4s ease;
+}
+
+/* HEADER – logo + tiêu đề + mô tả */
+.configprice-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.configprice-logo {
+    width: 120px;            /* kích thước logo */
+    height: auto;
+    margin-bottom: 14px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
+}
+
+.configprice-box h1 {
+    margin: 0 0 10px;
+    font-size: 1.85rem;     /* cỡ chữ tiêu đề chính */
+    font-weight: 800;
+    color: #0f172a;
+    text-align: center;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.configprice-intro {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;        /*  cỡ chữ mô tả dưới tiêu đề */
+    line-height: 1.7;
+    text-align: center;
+    max-width: 580px;
+}
+
+/* open buton , trạng thái khi chưa mở bảng */
+.configprice-open-action {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+/* action bar */
+.configprice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #e2e8f0;
+    align-items: center;
+}
+
+/* nút chương trình  */
+.cp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;     /*  padding nút */
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    font-size: 0.9rem;      /*cỡ chữ nút */
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* Primary */
+.cp-btn-primary {
+    background: #1e40af;
+    color: #fff;
+    border-color: #1e40af;
+}
+.cp-btn-primary:hover {
+    background: #1d3a9e;
+    border-color: #1d3a9e;
+    box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
+}
+
+/* Outline */
+.cp-btn-outline {
+    background: transparent;
+    color: #1e40af;
+    border-color: #1e40af;
+}
+.cp-btn-outline:hover {
+    background: #eff6ff;
+}
+
+/* Neutral */
+.cp-btn-neutral {
+    background: #f1f5f9;
+    color: #334155;
+    border-color: #e2e8f0;
+}
+.cp-btn-neutral:hover {
+    background: #e2e8f0;
+}
+
+/* Ghost – Đóng bảng */
+.cp-btn-ghost {
+    background: transparent;
+    color: #475569;          /*  màu chữ nút Đóng bảng */
+    border-color: #cbd5e1;   
+}
+.cp-btn-ghost:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-color: #94a3b8;
+}
+
+/* Danger */
+.cp-btn-danger {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+}
+.cp-btn-danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Small size */
+.cp-btn-sm {
+    padding: 6px 13px;      /*  nút Xoá trong bảng */
+    font-size: 0.8rem;
+    border-radius: 7px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MESSAGE BANNER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.configprice-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 0.9rem;      /* cỡ chữ message */
+    font-weight: 600;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    color: #14532d;
+}
+.configprice-message.error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #7f1d1d;
+}
+
+/* table wrapper */
+.configprice-table-wrapper {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+/* table */
+.configprice-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+}
+
+.configprice-table thead tr {
+    background: #f8fafc;
+}
+
+.configprice-table th {
+    padding: 14px 16px;     /*  padding header của bảng */
+    text-align: left;
+    font-size: 0.78rem;     /*  cỡ chữ header bảng */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.configprice-table td {
+    padding: 14px 16px;     /* padding từng ô trong bảng */
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    font-size: 0.92rem;     /* cỡ chữ nội dung bảng */
+    vertical-align: middle;
+}
+
+/* Zebra rows */
+.configprice-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+}
+
+/* Hover */
+.configprice-table tbody tr:hover td {
+    background: #eff6ff;
+    transition: background 0.12s;
+}
+
+/* Last row */
+.configprice-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* New row */
+.configprice-table tr.cp-row-new td {
+    background: #f0fdf4 !important;
+}
+
+/* Changed row */
+.configprice-table tr.cp-row-changed td {
+    background: #fefce8 !important;
+}
+
+/* Index column */
+.cp-idx {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    width: 36px;
+    text-align: center;
+}
+
+/* Current price */
+.cp-price-current {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.cp-price-current span {
+    font-weight: 700;
+    color: #0f172a;
+    font-variant-numeric: tabular-nums;
+}
+.cp-unit {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    display: block;
+}
+
+/* select input  */
+.cp-select {
+    padding: 8px 11px;      /*  padding dropdown */
+    border: 1.5px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 0.9rem;      /*  cỡ chữ dropdown */
+    color: #1e293b;
+    background: #fff;
+    cursor: pointer;
+    min-width: 120px;
+    transition: border-color 0.15s;
+}
+.cp-select:focus {
+    outline: none;
+    border-color: #1e40af;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+}
+
+.cp-input {
+    width: 100%;
+    max-width: 200px;       /*  chiều rộng ô nhập giá mới */
+    padding: 9px 12px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 9px;
+    font-size: 0.9rem;      /*  cỡ chữ input */
+    color: #1e293b;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cp-input::placeholder {
+    color: #94a3b8;
+    font-size: 0.83rem;
+}
+.cp-input:focus {
+    outline: none;
+    border-color: #1e40af;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+}
+.cp-input.cp-input-active {
+    border-color: #f59e0b;
+    background: #fffbeb;
+}
+
+/* price */
+.cp-preview {
+    font-weight: 700;
+    color: #94a3b8;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.9rem;
+}
+.cp-preview.cp-preview-changed {
+    color: #16a34a;
+}
+
+/* loading  */
+.configprice-center-cell {
+    text-align: center !important;
+    padding: 36px !important;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+.cp-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+/* animation */
+@keyframes cpFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    .configprice-page {
+        padding: 28px 14px;     /*  trang trên mobile */
+    }
+    .configprice-box {
+        padding: 28px 20px;     /* table trên mobile */
+    }
+    .configprice-box h1 {
+        font-size: 1.4rem;      /*  tiêu đề trên mobile */
+    }
+    .configprice-actions {
+        gap: 8px;
+    }
+    .cp-btn {
+        padding: 8px 14px;
+        font-size: 0.83rem;
+    }
+    .cp-input {
+        max-width: 100%;
+    }
+}

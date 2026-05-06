@@ -1,0 +1,291 @@
+﻿/* ===== PAGE ===== */
+.parkinglot-page {
+    /* [SỬA] Đổi height → min-height để tránh bị cắt nội dung trên màn hình nhỏ */
+    min-height: calc(100vh - 120px);
+    display: flex;
+    /* [SỬA] Thêm flex-direction: row rõ ràng để 2 card luôn song song ngang */
+    flex-direction: row;
+    /* [SỬA] Thêm align-items: stretch để 2 card cao bằng nhau */
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    /* [SỬA] Bỏ overflow: hidden vì nó có thể cắt mất nội dung table */
+    overflow: auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Background image */
+.parkinglot-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://images.unsplash.com/photo-1506521781263-d8422e82f27a");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    /* [SỬA] Thêm pointer-events: none để tránh ::before chặn click */
+    pointer-events: none;
+}
+
+/* ===== CARD ===== */
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+/* ===== FORM ===== */
+.parkinglot-form-card {
+    /* [SỬA] Đổi width cố định → flex: 1 để 2 card bằng nhau */
+    flex: 1;
+    /* [GIỮ] min-width để form không bị quá hẹp */
+    min-width: 260px;
+    /* [GIỮ] max-width để form không quá rộng */
+    max-width: 380px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* [SỬA] box-sizing đảm bảo padding không làm tràn width */
+    box-sizing: border-box;
+}
+
+.parkinglot-form-card h2 {
+    /* [SỬA] Thêm style cho tiêu đề form cho đồng bộ với table card */
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.parkinglot-form-card input {
+    height: 42px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    font-size: 0.95rem;
+    /* [SỬA] Thêm outline khi focus cho UX tốt hơn */
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.parkinglot-form-card input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ===== TABLE ===== */
+.parkinglot-table-card {
+    /* [GIỮ] flex: 1 giúp table card chiếm phần còn lại */
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.parkinglot-table-wrap {
+    flex: 1;
+    overflow-y: auto;
+    border-radius: 12px;
+    /* [SỬA] Thêm border nhẹ để bọc bảng rõ hơn */
+    border: 1px solid #e2e8f0;
+}
+
+/* ===== TABLE STYLE ===== */
+.parkinglot-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.parkinglot-table th,
+.parkinglot-table td {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #e2e8f0;
+    /* [SỬA] Thêm text-align left mặc định cho td */
+    text-align: left;
+}
+
+.parkinglot-table th {
+    background: #f1f5f9;
+    text-align: left;
+    /* [SỬA] Thêm font-weight rõ hơn */
+    font-weight: 600;
+    color: #475569;
+    /* [SỬA] Sticky header để khi scroll vẫn thấy tiêu đề */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* [SỬA] Thêm hover row để bảng dễ đọc hơn */
+.parkinglot-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* [SỬA] Căn giữa cell trống */
+.parkinglot-center-cell {
+    text-align: center;
+    color: #94a3b8;
+    padding: 32px 0 !important;
+    font-size: 0.9rem;
+}
+
+/* ===== BUTTON ===== */
+.button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    /* [SỬA] Thêm transition để button mượt hơn */
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.button:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.button.primary {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+}
+
+.button.danger {
+    background: #ef4444;
+    color: white;
+}
+
+/* ===== TOPBAR ===== */
+.parkinglot-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.parkinglot-topbar h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.parkinglot-bklogo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ===== ACTIONS ===== */
+.parkinglot-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.parkinglot-message {
+    font-size: 0.85rem;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+    /* [SỬA] Thêm border nhẹ cho message box nổi bật hơn */
+    border: 1px solid #bfdbfe;
+}
+
+/* ===== WELCOME SCREEN ===== */
+.parkinglot-welcome {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    position: relative;
+}
+
+.parkinglot-welcome::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://images.unsplash.com/photo-1506521781263-d8422e82f27a");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.parkinglot-welcome-card {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    padding: 48px 56px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 420px;
+    width: 90%;
+}
+
+.welcome-logo {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+}
+
+.welcome-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.welcome-desc {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.welcome-btn {
+    margin-top: 8px;
+    padding: 12px 32px;
+    font-size: 1rem;
+    border-radius: 12px;
+}
+
+/* ===== BUTTON SECONDARY ===== */
+.button.secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+/* ===== RESPONSIVE: màn hình nhỏ xếp dọc ===== */
+/* [SỬA] Thêm responsive để trên mobile 2 card xếp dọc thay vì bị tràn */
+@media (max-width: 640px) {
+    .parkinglot-page {
+        flex-direction: column;
+    }
+
+    .parkinglot-form-card {
+        max-width: 100%;
+    }
+}

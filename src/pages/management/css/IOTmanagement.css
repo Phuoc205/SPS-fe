@@ -1,0 +1,261 @@
+/* Tổng quan trang */
+.iot-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Màu nền xám sáng đồng bộ với dự án */
+}
+
+/* Khung chứa nội dung chính */
+.iot-container {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 30px auto;
+    width: 90%;
+    max-width: 1200px;
+    flex: 1;
+}
+
+/* Phần Header của bảng */
+.iot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f3f5;
+    padding-bottom: 15px;
+}
+
+.iot-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+/* Các nút bấm cơ bản */
+.btn-add {
+    padding: 10px 15px;
+    background-color: #4285f4; /* Xanh Google đồng bộ */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-add:hover { background-color: #3367d6; }
+
+.btn-edit {
+    background-color: #fbbc05; /* Vàng cam */
+    color: #fff;
+    font-weight: bold;
+}
+
+.btn-delete {
+    background-color: #ea4335; /* Đỏ */
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Bảng dữ liệu */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.iot-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.iot-table th, .iot-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.iot-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.iot-table tr:hover {
+    background-color: #f1f3f5;
+}
+
+.empty-state {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 30px !important;
+}
+
+/* Modal (Hộp thoại popup) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Form trong Modal */
+.iot-form .form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.iot-form label {
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.iot-form input, .iot-form select {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+.iot-form input:focus, .iot-form select:focus {
+    border-color: #4285f4;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.btn-cancel {
+    padding: 10px 15px;
+    background: #e9ecef;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #495057;
+    font-weight: bold;
+}
+
+.btn-save {
+    padding: 10px 20px;
+    background: #4285f4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.iot-page {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+.iot-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.iot-header { margin-bottom: 24px; }
+.iot-title h2 { font-size: 24px; color: #111827; margin-bottom: 4px; }
+.iot-title p { font-size: 14px; color: #6b7280; }
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+}
+
+.search-filter-group { display: flex; gap: 12px; }
+.search-wrapper { position: relative; }
+.search-icon { position: absolute; left: 12px; top: 10px; width: 18px; color: #9ca3af; }
+.search-wrapper input {
+    padding: 10px 14px 10px 38px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    width: 250px;
+}
+
+.filter-select {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+}
+
+.btn-add {
+    background: #111827;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Table styling */
+.table-wrapper { border: 1px solid #e5e7eb; border-radius: 8px; }
+.iot-table { width: 100%; border-collapse: collapse; }
+.iot-table th { padding: 12px 24px; background: #f9fafb; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+.iot-table td { padding: 16px 24px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+
+/* FIX CỘT THAO TÁC */
+.iot-table td.actions {
+    display: table-cell;
+    text-align: center;
+    white-space: nowrap;
+    width: 100px;
+}
+
+.btn-icon {
+    display: inline-block;
+    margin: 0 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* Status Badges */
+.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.status-badge.active { background: #ecfdf5; color: #059669; }
+.status-badge.maintenance { background: #fff7ed; color: #ea580c; }
+.status-badge.inactive { background: #fef2f2; color: #dc2626; }
+
+/* Pagination */
+.pagination { display: flex; justify-content: space-between; padding: 16px 24px; align-items: center; border-top: 1px solid #e5e7eb; }
+.page-num.active { background: #f3f4f6; font-weight: 600; }
+.page-btn { padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; background: white; }

@@ -1,0 +1,237 @@
+/* --- BIẾN MÀU SẮC DÙNG CHUNG --- */
+:root {
+  --bg-main: #f9fafb;
+  --bg-sidebar: #0f172a;
+  --bg-sidebar-hover: #1e293b;
+  --bg-white: #ffffff;
+  --text-dark: #111827;
+  --text-light: #f8fafc;
+  --text-muted: #cbd5e1;
+  --primary-color: #2563eb;
+  --danger-color: #ef4444;
+  --border-color: #e2e8f0;
+  --border-sidebar: #334155;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- BỐ CỤC TỔNG THỂ --- */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background-color: var(--bg-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-dark);
+  overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+  background-color: var(--bg-sidebar);
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease-in-out;
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+}
+
+.sidebar.open {
+  width: 260px;
+}
+
+.sidebar.closed {
+  width: 80px;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-sidebar);
+}
+
+.logo-text {
+  font-weight: bold;
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+/* Sidebar Menu */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-sidebar-hover);
+  color: var(--text-light);
+}
+
+.nav-link.active {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+}
+
+.nav-text {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Sidebar Footer (Đăng xuất) */
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border-sidebar);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.logout-btn:hover {
+  background-color: var(--danger-color);
+  color: var(--text-light);
+}
+
+/* Ẩn text khi thu nhỏ sidebar */
+.hidden-text {
+  display: none;
+}
+
+/* --- KHU VỰC NỘI DUNG CHÍNH --- */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Tránh tràn layout */
+}
+
+/* Topbar */
+.topbar {
+  height: 64px;
+  background-color: var(--bg-white);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 10;
+}
+
+.topbar-left, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.menu-toggle:hover {
+  background-color: #f3f4f6;
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* User Profile */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #dbeafe;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 1px solid #bfdbfe;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Vùng hiển thị Router Outlet */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.content-card {
+  background-color: var(--bg-white);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  min-height: calc(100% - 48px); /* Trừ đi padding của content-area */
+}

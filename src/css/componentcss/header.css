@@ -1,0 +1,132 @@
+/* HEADER WRAPPER */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+/* CONTAINER */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10%;
+    height: 80px;
+}
+
+/* LOGO */
+.header-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-logo {
+    height: 40px;
+}
+
+.brand {
+    font-weight: 600;
+    font-size: 18px;
+    color: #111827;
+}
+
+/* MENU */
+.header-menubar {
+    display: flex;
+    gap: 30px;
+}
+
+.header-menubar-item {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 500;
+    position: relative;
+    transition: 0.3s;
+}
+
+/* Hover */
+.header-menubar-item:hover {
+    color: #111827;
+}
+
+/* Underline animation */
+.header-menubar-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0%;
+    height: 2px;
+    background: #2563eb;
+    transition: 0.3s;
+}
+
+.header-menubar-item:hover::after {
+    width: 100%;
+}
+
+/* RIGHT SIDE */
+.header-login {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* SIGN IN */
+.signin {
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* GET STARTED BUTTON */
+.getstarted {
+    background: #2563eb;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.getstarted:hover {
+    background: #1d4ed8;
+}
+
+/* USER */
+.welcome {
+    color: #374151;
+    font-size: 14px;
+}
+
+.logout {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout:hover {
+    background: #dc2626;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+    }
+
+    .header-menubar {
+        margin: 10px 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

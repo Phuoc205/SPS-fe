@@ -1,0 +1,230 @@
+/* Tổng quan trang */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Nền gradient tối cực đẹp */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+}
+
+/* Khung Card chính (Glassmorphism) */
+.login-card {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* ===== PHẦN TRÁI: FORM ĐĂNG NHẬP ===== */
+.login-form-section {
+    flex: 1;
+    padding: 50px 60px;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand-logo-mobile {
+    display: none;
+    color: #10b981;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.login-header {
+    margin-bottom: 40px;
+}
+
+.login-header h2 {
+    color: #ffffff;
+    font-size: 32px;
+    margin: 0 0 10px 0;
+}
+
+.login-header p {
+    color: #9ca3af;
+    margin: 0;
+    font-size: 15px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: #d1d5db;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input-group input {
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #10b981;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.input-group input::placeholder {
+    color: #6b7280;
+}
+
+.btn-primary {
+    margin-top: 10px;
+    padding: 16px;
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background: #059669;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.signup-prompt {
+    margin-top: 15px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #10b981;
+    font-weight: 600;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+/* ===== PHẦN PHẢI: THÔNG TIN (INFO) ===== */
+.login-info-section {
+    flex: 1.2;
+    padding: 50px 60px;
+    background: rgba(16, 185, 129, 0.05); /* Phủ một lớp xanh nhẹ */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-content h1 {
+    color: #ffffff;
+    font-size: 38px;
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+}
+
+.info-content .description {
+    color: #d1d5db;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feature-list li {
+    color: #f3f4f6;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.check-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.btn-outline {
+    padding: 12px 24px;
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid #10b981;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start; /* Nút chỉ chiếm độ rộng vừa đủ và nằm bên trái */
+}
+
+.btn-outline:hover {
+    background: #10b981;
+}
+
+/* ===== ĐÁP ỨNG ĐIỆN THOẠI (RESPONSIVE) ===== */
+@media (max-width: 768px) {
+    .login-card {
+        flex-direction: column;
+    }
+
+    .login-info-section {
+        display: none; /* Ẩn phần giới thiệu trên mobile để tập trung form login */
+    }
+
+    .login-form-section {
+        padding: 40px 30px;
+    }
+
+    .brand-logo-mobile {
+        display: block;
+    }
+}

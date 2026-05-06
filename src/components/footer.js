@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../css/footer.css";
+import "../css/componentcss/footer.css";
 
 const Footer = () => {
     const navigate = useNavigate();
     const goToParking = () => {
-        navigate("/parkinglot");
+        navigate("/parkingaction");
     };
     const goToNews = () => {
         navigate("/news");
