@@ -8,6 +8,7 @@ import ConfigPrice from "../pages/management/configprice";
 import ParkingLotManagement from "../pages/management/parkinglotmanagement";
 import IOTManagement from "../pages/management/IOTmanagement";
 import SlotManagement from "../pages/management/slotmanagement";
+import RevenueReport from "../pages/management/revenuereport";
 
 const AdminRoutes = () => {
     return (
@@ -26,6 +27,7 @@ const AdminRoutes = () => {
                 <Route path="price" element={<ConfigPrice />} />
                 <Route path="lot" element={<ParkingLotManagement />} />
                 <Route path="slot" element={<SlotManagement />} />
+                <Route path="report" element={<RevenueReport />} />
             </Route>
         </Routes>
     );

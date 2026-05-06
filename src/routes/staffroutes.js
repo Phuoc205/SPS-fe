@@ -12,7 +12,7 @@ const StaffRoutes = () => {
                 path="/"
                 element={
                     <ProtectedRoute allowedRoles={["STAFF"]}>
-                        <div>Staff Dashboard</div> {/* Thay bằng <StaffDashboard /> */}
+                        <StaffLayout />
                     </ProtectedRoute>
                 }
             />
@@ -35,7 +35,6 @@ const StaffRoutes = () => {
                 }
             />
             
-            {/* Các route staff khác thêm vào đây, VD: path="slotmanagement" */}
         </Routes>
     );
 };

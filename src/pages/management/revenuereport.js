@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./css/revenuereport.css";
 
 const api_url = process.env.REACT_APP_API_URL;
-const API_BASE = process.env.REACT_APP_API_URL;
 
 function formatCurrency(value) {
   const amount = Number(value || 0);
@@ -66,11 +65,11 @@ export default function RevenueReport() {
 
     try {
       const [revenueRes, usageRes] = await Promise.all([
-        fetch(`${API_BASE}/api/reports/revenue`, {
+        fetch(`${api_url}/api/reports/revenue`, {
           method: "GET",
           headers,
         }),
-        fetch(`${API_BASE}/api/reports/usage`, {
+        fetch(`${api_url}/api/reports/usage`, {
           method: "GET",
           headers,
         }),
@@ -93,7 +92,7 @@ export default function RevenueReport() {
     } catch (err) {
       console.error("Revenue report error:", err);
       setError(
-        "Không thể tải báo cáo doanh thu. Hãy kiểm tra backend, token đăng nhập hoặc địa chỉ API_BASE."
+        "Không thể tải báo cáo doanh thu. Hãy kiểm tra backend, token đăng nhập hoặc địa chỉ api_url."
       );
     } finally {
       setLoading(false);

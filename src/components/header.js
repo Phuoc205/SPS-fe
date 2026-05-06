@@ -99,7 +99,7 @@ const Header = () => {
                             <Link to="/login" className="signin">
                                 Sign In
                             </Link>
-                            <Link to="/register" className="getstarted">
+                            <Link to="/" className="getstarted">
                                 Get Started
                             </Link>
                         </>

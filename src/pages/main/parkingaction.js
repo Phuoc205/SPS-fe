@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Header from '../components/header';
-import Footer from '../components/footer';
-import '../css/parkingaction.css';
+import Header from '../../components/header';
+import Footer from '../../components/footer';
+import './css/parkingaction.css';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const PARKING_LOTS_API = `${API_BASE}/api/parking-lots`;

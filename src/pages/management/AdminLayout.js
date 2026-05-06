@@ -20,13 +20,13 @@ const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const menuItems = [
-        { name: "Dashboard", path: "/admin", icon: <LayoutDashboard size={20} /> },
+        { name: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
         { name: "Người dùng", path: "/admin/users", icon: <Users size={20} /> },
         { name: "Thiết bị IOT", path: "/admin/iot", icon: <Cpu size={20} /> },
         { name: "Cấu hình giá", path: "/admin/price", icon: <CircleDollarSign size={20} /> },
         { name: "Bãi đỗ xe", path: "/admin/lot", icon: <Warehouse size={20} /> },
         { name: "Vị trí đỗ (Slots)", path: "/admin/slot", icon: <CarFront size={20} /> },
-        { name: "Báo cáo doanh thu", path: "/admin/revenue", icon: <LineChart size={20} /> },
+        { name: "Báo cáo doanh thu", path: "/admin/report", icon: <LineChart size={20} /> },
     ];
 
     const handleLogout = () => {

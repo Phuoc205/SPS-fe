@@ -1,14 +1,43 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 import HomePage from "../pages/homepage";
+import ParkingAction from "../pages/main/parkingaction";
+import ParkingHistory from "../pages/main/parkinghistory";
 
 const UserRoutes = () => {
     return (
-        <ProtectedRoute allowedRoles={["USER", "ADMIN"]}>
-            <HomePage />
-        </ProtectedRoute>
+        
+        <Routes>
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute allowedRoles={["USER"]}>
+                        <HomePage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/action"
+                element={
+                    <ProtectedRoute allowedRoles={["STAFF"]}>
+                        <ParkingAction />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/history"
+                element={
+                    <ProtectedRoute allowedRoles={["STAFF"]}>
+                        <ParkingHistory />
+                    </ProtectedRoute>
+                }
+            />
+            
+        </Routes>
     );
 };
 

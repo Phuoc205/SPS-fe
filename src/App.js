@@ -8,10 +8,12 @@ import Unauthorized from "./components/Unauthorized";
 import AdminRoutes from "./routes/AdminRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import UserRoutes from "./routes/UserRoutes";
+import Homepage from "./pages/homepage";
 
 function App() {
     return (
         <Routes>
+            <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized/>} />
