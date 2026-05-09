@@ -4,7 +4,7 @@ import './css/parkinglotmangement.css'
 import bkLogo from '/public/images/logo-sps.png'
 
 const api_url = process.env.REACT_APP_API_URL;
-const initialForm = { name: '', location: '' }
+const initialForm = { name: '', location: '', capacity: '' }
 
 const ParkingLotManagement = () => { 
     const [lots, setLots] = useState([])
@@ -40,15 +40,16 @@ const ParkingLotManagement = () => {
 
     const handleAddLot = async (event) => {
         event.preventDefault()
-        if (!form.name.trim() || !form.location.trim()) {
-            setMessage('Vui lòng điền tên và vị trí khu đỗ.')
+        if (!form.name.trim() || !form.location.trim() || !form.capacity.trim()) {
+            setMessage('Vui lòng điền tên, vị trí và sức chứa khu đỗ.')
             return
         }
 
         try {
             const payload = {
                 name: form.name.trim(),
-                location: form.location.trim()
+                location: form.location.trim(),
+                capacity: parseInt(form.capacity.trim(), 10)
             }
             await axios.post(`${api_url}/api/parking-lots`, payload)
             setForm(initialForm)
@@ -121,6 +122,13 @@ const ParkingLotManagement = () => {
                         onChange={(e) => handleChange('location', e.target.value)}
                         placeholder="Vị trí/khu vực"
                     />
+                    <input
+                        type="number"
+                        value={form.capacity}
+                        onChange={(e) => handleChange('capacity', e.target.value)}
+                        placeholder="Sức chứa"
+                        min="1"
+                    />
 
                     <div className="parkinglot-actions">
                         <button type="submit" onClick={handleAddLot} className="button primary">
@@ -156,19 +164,20 @@ const ParkingLotManagement = () => {
                                     <th>#</th>
                                     <th>Tên khu</th>
                                     <th>Vị trí</th>
+                                    <th>Sức chứa</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="4" className="parkinglot-center-cell">
+                                        <td colSpan="5" className="parkinglot-center-cell">
                                             Đang tải dữ liệu...
                                         </td>
                                     </tr>
                                 ) : lots.length === 0 ? (
                                     <tr>
-                                        <td colSpan="4" className="parkinglot-center-cell">
+                                        <td colSpan="5" className="parkinglot-center-cell">
                                             Chưa có khu đỗ nào. Hãy thêm khu mới.
                                         </td>
                                     </tr>
@@ -178,6 +187,7 @@ const ParkingLotManagement = () => {
                                             <td>{index + 1}</td>
                                             <td>{lot.name}</td>
                                             <td>{lot.location || '-'}</td>
+                                            <td>{lot.capacity || '-'}</td>
                                             <td>
                                                 <button
                                                     className="button danger"

@@ -133,7 +133,7 @@
 
 /* [SỬA] Căn giữa cell trống */
 .parkinglot-center-cell {
-    text-align: center;
+    text-align: center !important;
     color: #94a3b8;
     padding: 32px 0 !important;
     font-size: 0.9rem;
