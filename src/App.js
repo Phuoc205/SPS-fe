@@ -15,18 +15,20 @@ import ParkingAvailability from "./pages/management/ParkingAvailability";
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/unauthorized" element={<Unauthorized/>} />
+        <AuthProvider>
+            <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-            <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="/staff/*" element={<StaffRoutes />} />
-            <Route path="/parking-availability" element={<ParkingAvailability />} />
-            <Route path="/*" element={<UserRoutes />} />
-        </Routes>
+                <Route path="/admin/*" element={<AdminRoutes />} />
+                <Route path="/staff/*" element={<StaffRoutes />} />
+                <Route path="/parking-availability" element={<ParkingAvailability />} />
+                <Route path="/*" element={<UserRoutes />} />
+            </Routes>
+        </AuthProvider>
     );
 }
 
-export default App
+export default App;

@@ -1,0 +1,237 @@
+/* Tổng quan Layout */
+.staff-container {
+    display: flex;
+    height: 100vh;
+    background-color: #0f172a; /* Nền tối */
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+.staff-sidebar {
+    width: 280px;
+    background-color: #1e293b;
+    border-right: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.staff-sidebar,
+.staff-header {
+    color: #f8fafc;
+}
+
+.staff-brand {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid #334155;
+    background-color: #0f172a;
+    gap: 12px;
+}
+
+.staff-brand .brand-icon {
+    font-size: 24px;
+}
+
+.staff-brand h2 {
+    color: #10b981; /* Xanh ngọc */
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.staff-nav {
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-left: 12px;
+    letter-spacing: 1px;
+}
+
+.staff-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.staff-nav-item:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    transform: translateX(4px);
+}
+
+.staff-nav-item.active {
+    background-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.staff-nav-icon {
+    margin-right: 14px;
+    font-size: 20px;
+}
+
+/* ===== MAIN AREA ===== */
+.staff-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: initial;
+}
+
+.staff-content {
+    color: initial;
+}
+
+/* HEADER */
+.staff-header {
+    height: 76px;
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+}
+
+.staff-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.staff-title h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.live-status {
+    font-size: 13px;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.staff-user {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    line-height: 1.3;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.user-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #f8fafc;
+    white-space: nowrap;
+}
+
+.staff-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444; /* Màu đỏ mượt */
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.staff-logout:hover {
+    background-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.logout-icon {
+    font-size: 16px;
+}
+
+/* CONTENT AREA */
+.staff-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    background-color: #0f172a;
+}
+
+/* Custom Scrollbar cho Content */
+.staff-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.staff-content::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+.staff-content::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+.staff-content::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}

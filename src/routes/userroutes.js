@@ -5,7 +5,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import HomePage from "../pages/homepage";
 import ParkingAction from "../pages/main/parkingaction";
 import ParkingHistory from "../pages/main/parkinghistory";
-
+import Payment from "../pages/payment"
 const UserRoutes = () => {
     return (
         
@@ -22,7 +22,7 @@ const UserRoutes = () => {
             <Route
                 path="/action"
                 element={
-                    <ProtectedRoute allowedRoles={["STAFF"]}>
+                    <ProtectedRoute allowedRoles={["USER"]}>
                         <ParkingAction />
                     </ProtectedRoute>
                 }
@@ -31,8 +31,17 @@ const UserRoutes = () => {
             <Route
                 path="/history"
                 element={
-                    <ProtectedRoute allowedRoles={["STAFF"]}>
+                    <ProtectedRoute allowedRoles={["USER"]}>
                         <ParkingHistory />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/payment"
+                element={
+                    <ProtectedRoute allowedRoles={["USER"]}>
+                        <Payment/>
                     </ProtectedRoute>
                 }
             />
