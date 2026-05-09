@@ -11,7 +11,7 @@ import UserRoutes from "./routes/UserRoutes";
 import Homepage from "./pages/homepage";
 
 import ParkingAvailability from "./pages/management/ParkingAvailability";
-
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
     return (
