@@ -10,19 +10,23 @@ import StaffRoutes from "./routes/StaffRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import Homepage from "./pages/homepage";
 
+import { AuthProvider } from "./context/AuthContext";
+
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/unauthorized" element={<Unauthorized/>} />
+        <AuthProvider>
+            <Routes>
+                <Route path="/" element={<Homepage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
 
-            <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="/staff/*" element={<StaffRoutes />} />
-            <Route path="/*" element={<UserRoutes />} />
-        </Routes>
+                <Route path="/admin/*" element={<AdminRoutes />} />
+                <Route path="/staff/*" element={<StaffRoutes />} />
+                <Route path="/*" element={<UserRoutes />} />
+            </Routes>
+        </AuthProvider>
     );
 }
 
-export default App
+export default App;

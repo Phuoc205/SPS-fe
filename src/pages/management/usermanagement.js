@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/usermanagement.css";
 
-const api_url = process.env.REACT_APP_API_URL;
-
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -13,8 +11,6 @@ const UserManagement = () => {
     // Thêm các state phục vụ Phân trang (Pagination)
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 8; // Giới hạn 8 người 1 trang
-
-    const api_url = process.env.REACT_APP_API_URL;
     
     const [formData, setFormData] = useState({
         id: "",
@@ -36,8 +32,8 @@ const UserManagement = () => {
     const fetchUsers = async (keyword = "") => {
         try {
             const url = keyword 
-                ? `${api_url}/users?keyword=${encodeURIComponent(keyword)}` 
-                : "${api_url}/users";
+                ? `http://localhost:5000/api/users?keyword=${encodeURIComponent(keyword)}` 
+                : "http://localhost:5000/api/users";
             
             const response = await fetch(url);
             if (response.ok) {

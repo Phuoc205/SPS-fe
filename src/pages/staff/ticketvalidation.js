@@ -1,8 +1,8 @@
 /* Duc Huy - Chức năng: Ticket Validation (Fixed Flicker & Sync Bugs) */
 import React, { useState, useEffect } from 'react';
-import Header from "../../components/header";
-import Footer from "../../components/footer";
 import "../management/css/usermanagement.css"; 
+import { AuthProvider } from '../../context/AuthContext';
+import { useAuth } from "../../context/AuthContext";
 
 const TicketValidation = () => {
     // Thêm state isAuthLoading để tránh lỗi chớp màn hình
@@ -22,12 +22,9 @@ const TicketValidation = () => {
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
-        setIsAuthLoading(false); // Đã kiểm tra xong quyền
+        setIsAuthLoading(false);
     }, []);
 
-    const canAccess = user && (user.role === "ADMIN" || user.role === "PARKING_STAFF");
-
-    // Sửa lỗi Sync: Reset kết quả khi người dùng thay đổi mã vé
     const handleInputChange = (e) => {
         setTicketId(e.target.value);
         if (isValid !== null) setIsValid(null); 
@@ -36,53 +33,47 @@ const TicketValidation = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
+
         if (!ticketId.trim()) {
             setError("Vui lòng nhập mã vé.");
             return;
         }
 
-        setLoading(true);
-        setError("");
-        setIsValid(null);
-
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ticketId: ticketId }) 
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ ticketId }),
             });
 
-            if (!response.ok) throw new Error("Không thể kết nối với server.");
-            const result = await response.json(); 
-            setIsValid(result); 
+            const data = await res.json();
+            setIsValid(data);
         } catch (err) {
-            setError("Lỗi: Server Backend chưa phản hồi.");
-        } finally {
-            setLoading(false);
+            setError("Không thể kết nối server");
         }
     };
 
-    // Chờ kiểm tra quyền xong mới hiển thị nội dung
     if (isAuthLoading) {
         return <div style={{ textAlign: 'center', padding: '100px' }}>Đang xác thực...</div>;
     }
 
+    const canAccess = user && (user.role === "ADMIN" || user.role === "STAFF");
+
     if (!canAccess) {
         return (
             <div className="um-page">
-                <Header />
                 <div className="um-container" style={{ textAlign: 'center', padding: '100px 0' }}>
                     <h2 style={{ color: '#d32f2f' }}>🚫 Truy cập bị từ chối</h2>
                     <p>Bạn cần quyền <strong>Staff</strong> hoặc <strong>Admin</strong> để sử dụng tính năng này.</p>
                 </div>
-                <Footer />
             </div>
         );
     }
 
     return (
         <div className="um-page">
-            <Header />
             <div className="um-container">
                 <div className="um-header" style={{ textAlign: 'center' }}>
                     <h2>Ticket Validation</h2>
@@ -119,7 +110,6 @@ const TicketValidation = () => {
                     </div>
                 )}
             </div>
-            <Footer />
         </div>
     );
 };

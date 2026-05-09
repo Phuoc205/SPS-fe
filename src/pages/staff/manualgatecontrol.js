@@ -1,8 +1,6 @@
 /* Duc Huy - Chức năng: Manual Gate Control (Demo) */
 
 import React, { useState, useEffect } from 'react';
-import Header from "../../components/header";
-import Footer from "../../components/footer";
 import "../management/css/usermanagement.css"; 
 
 const ManualGateControl = () => {
@@ -47,7 +45,6 @@ const ManualGateControl = () => {
 
     return (
         <div className="um-page">
-            <Header />
             
             <div className="um-container">
                 <div className="um-header" style={{ textAlign: 'center' }}>
@@ -124,7 +121,6 @@ const ManualGateControl = () => {
                     </p>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

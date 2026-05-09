@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import "./css/login.css";
+import { useAuth } from "../../context/AuthContext";
 // import Header from "../components/header";
 // import Footer from "../components/footer";
 // import img1 from "/public/images/logo-sps.png";
@@ -11,35 +12,36 @@ const api_url = process.env.REACT_APP_API_URL;
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = async (event) => {
         event.preventDefault();
+
         try {
-            const response = await axios.post(`${api_url}/auth/login`, {
-                username,
-                password
-            });
+            const response = await axios.post(
+                `${api_url}/auth/login`,
+                { username, password }
+            );
 
             const { token, name, role } = response.data;
 
-            localStorage.setItem("user", JSON.stringify({ name, role }));
-            localStorage.setItem("userToken", token);
+            login({ name, role }, token);
 
-            if (role === "ADMIN") {
+            if (role.toUpperCase().includes("ADMIN")) {
                 navigate("/admin");
-            }
-            else if (role == "STAFF") {
+            } else if (role.toUpperCase().includes("STAFF")) {
                 navigate("/staff");
             } else {
                 navigate("/");
             }
+
         } catch (err) {
             console.error(err);
             alert("Sai tài khoản hoặc mật khẩu");
         }
     };
-
     return (
         <div className="login-container">
             <div className="login-card">
