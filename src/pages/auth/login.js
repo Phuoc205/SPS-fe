@@ -27,7 +27,14 @@ const Login = () => {
 
             const { token, name, role } = response.data;
 
-            login({ name, role }, token);
+           login(
+                {
+                    id: response.data.id,
+                    username: response.data.username,
+                    role: response.data.role
+                },
+                token
+            );
 
             if (role.toUpperCase().includes("ADMIN")) {
                 navigate("/admin");

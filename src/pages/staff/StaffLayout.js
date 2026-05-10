@@ -20,6 +20,7 @@ const StaffLayout = () => {
     const menuItems = [
         { path: "/staff/ticketvalidation", label: "Kiểm tra vé xe", icon: "🎫" },
         { path: "/staff/manualgatecontrol", label: "Điều khiển Barie", icon: "🚧" },
+        { path: "/staff/slot", label: "Giám sát ô đỗ", icon: "🅿️" },
     ];
 
     return (

@@ -34,7 +34,7 @@ const ConfigPrice = () => {
         setLoading(true);
         setMessage({ text:'', isError:false });
         try {
-            const res  = await axios.get(`${api_url}/api/pricing`);
+            const res  = await axios.get(`${api_url}/pricing`);
             const data = Array.isArray(res.data) ? res.data : [];
             setConfigPrices(data.map(item => ({
                 id: item.id,
@@ -83,7 +83,7 @@ const ConfigPrice = () => {
         if (item?.isNew) { setConfigPrices(c => c.filter(i => i.id !== id)); return; }
         if (!window.confirm('Bạn có chắc muốn xoá cấu hình giá này?')) return;
         try {
-            await axios.delete(`${api_url}/api/pricing/${id}`);
+            await axios.delete(`${api_url}/pricing/${id}`);
             setMessage({ text:'Đã xoá cấu hình thành công.', isError:false });
             loadConfigPrices();
         } catch (err) {
@@ -123,8 +123,8 @@ const ConfigPrice = () => {
         try {
             await Promise.all(changed.map(item =>
                 (item.isNew || `${item.id}`.startsWith('new-'))
-                    ? axios.post(`${api_url}/api/pricing`, buildPayload(item))
-                    : axios.put(`${api_url}/api/pricing/${item.id}`, buildPayload(item))
+                    ? axios.post(`${api_url}/pricing`, buildPayload(item))
+                    : axios.put(`${api_url}/pricing/${item.id}`, buildPayload(item))
             ));
             setMessage({ text:'✓ Giá đã được cập nhật thành công.', isError:false });
             loadConfigPrices();

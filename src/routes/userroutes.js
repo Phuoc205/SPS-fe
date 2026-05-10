@@ -20,7 +20,7 @@ const UserRoutes = () => {
             />
 
             <Route
-                path="/action"
+                path="/parkingaction"
                 element={
                     <ProtectedRoute allowedRoles={["USER"]}>
                         <ParkingAction />

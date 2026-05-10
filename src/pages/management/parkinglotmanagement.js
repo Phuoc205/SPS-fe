@@ -23,7 +23,7 @@ const ParkingLotManagement = () => {
         setLoading(true)
         setMessage('')
         try {
-            const response = await axios.get(`${api_url}/api/parking-lots`)
+            const response = await axios.get(`${api_url}/parking-lots`)
             setLots(Array.isArray(response.data) ? response.data : [])
         } catch (err) {
             console.error('Lỗi tải danh sách khu đỗ:', err)
@@ -51,7 +51,7 @@ const ParkingLotManagement = () => {
                 location: form.location.trim(),
                 capacity: parseInt(form.capacity.trim(), 10)
             }
-            await axios.post(`${api_url}/api/parking-lots`, payload)
+            await axios.post(`${api_url}/parking-lots`, payload)
             setForm(initialForm)
             setMessage('Đã thêm khu đỗ mới.')
             loadParkingLots()
@@ -64,7 +64,7 @@ const ParkingLotManagement = () => {
     const handleDeleteLot = async (id) => {
         if (!window.confirm('Bạn có chắc muốn xóa khu đỗ này?')) return
         try {
-            await axios.delete(`${api_url}/api/parking-lots/${id}`)
+            await axios.delete(`${api_url}/parking-lots/${id}`)
             setMessage('Đã xóa khu đỗ.')
             loadParkingLots()
         } catch (err) {

@@ -29,7 +29,7 @@ const Header = () => {
     const userNav = [
         { name: "Homepage", path: "/" },
         { name: "Parking", path: "/parkingaction" },
-        { name: "Parking History", path: "/parkinghistory" },
+        { name: "Parking History", path: "/history" },
         { name: "Payment", path: "/payment" },
     ];
 
