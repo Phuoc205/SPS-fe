@@ -1,47 +1,66 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import "../css/parkinghistory.css";
+import { useAuth } from "../../context/AuthContext";
+import "./css/parkinghistory.css";
 
 const ParkingHistory = () => {
-    // Chạy cứng theo port Backend quy định trong doc là 5000
-    const API_URL = 'http://localhost:5000';
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+    const API_URL = "http://localhost:5000";
+
+    const { user, token } = useAuth();
+
     const [historyData, setHistoryData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [error, setError] = useState("");
 
-    // State cho bộ lọc
-    const [statusFilter, setStatusFilter] = useState('ALL');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [statusFilter, setStatusFilter] = useState("ALL");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     useEffect(() => {
+
         const fetchHistory = async () => {
+
             try {
-                const token = localStorage.getItem('userToken');
-                // API: GET /api/history/user/{id}
-                const response = await axios.get(`${API_URL}/api/history/user/${user.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                // Dữ liệu mảng: [{ sessionId, slotName, entryTime, exitTime, status }]
+
+                const response = await axios.get(
+                    `${API_URL}/api/history/user/${user.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
                 setHistoryData(response.data);
+
             } catch (err) {
-                console.error('Lỗi tải lịch sử:', err);
-                setError('Không thể tải lịch sử gửi xe từ máy chủ.');
+
+                console.error(err);
+
+                setError(
+                    "Không thể tải lịch sử gửi xe từ máy chủ."
+                );
+
             } finally {
+
                 setLoading(false);
             }
         };
 
-        if (user.id) {
+        if (user?.id) {
+
             fetchHistory();
+
         } else {
+
             setLoading(false);
-            setError('Không tìm thấy thông tin định danh (User ID). Vui lòng đăng nhập lại.');
+
+            setError(
+                "Không tìm thấy User ID. Vui lòng đăng nhập lại."
+            );
         }
-    }, [user.id]);
+
+    }, [user, token]);
 
     // Format thời gian hiển thị
     const formatDateTime = (dateString) => {
@@ -70,12 +89,11 @@ const ParkingHistory = () => {
         return true;
     });
 
-    if (loading) return <div className="parking-container"><Header/><div className="parking-content"><p>Đang tải dữ liệu...</p></div><Footer/></div>;
-    if (error) return <div className="parking-container"><Header/><div className="parking-content"><p>{error}</p></div><Footer/></div>;
+    if (loading) return <div className="parking-container"><div className="parking-content"><p>Đang tải dữ liệu...</p></div></div>;
+    if (error) return <div className="parking-container"><div className="parking-content"><p>{error}</p></div></div>;
 
     return (
         <div className="parking-container">
-            <Header />
 
             <div className="parking-content">
                 <h2 className="parking-title">Lịch sử đỗ xe</h2>
@@ -149,7 +167,6 @@ const ParkingHistory = () => {
                 </div>
             </div>
 
-            <Footer/>
         </div>
     );
 };

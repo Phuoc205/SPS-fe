@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./css/iotmanagement.css";
 
-const api_url = process.env.REACT_APP_API_URL;
+const api_url = process.env.REACT_APP_API_URL; // Đảm bảo bạn đã cấu hình port 5000 (hoặc port của Spring Boot)
 
 const IOTManagement = () => {
     const [devices, setDevices] = useState([]);
@@ -13,12 +13,14 @@ const IOTManagement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const devicesPerPage = 8;
     
-    // ĐÃ SỬA: Đổi name -> deviceName, type -> deviceType để khớp 100% với file Device.java
+    // Đã sửa: Khớp 100% với file Device.java trong Spring Boot
     const [formData, setFormData] = useState({
         id: "",
-        deviceName: "",
-        deviceType: "",
-        status: "ACTIVE"
+        deviceCode: "",
+        type: "",
+        location: "",
+        slotId: "",
+        active: true
     });
 
     useEffect(() => {
@@ -32,8 +34,8 @@ const IOTManagement = () => {
     const fetchDevices = async (keyword = "") => {
         try {
             const url = keyword 
-                ? `${api_url}/api/devices?keyword=${encodeURIComponent(keyword)}`
-                : `${api_url}/api/devices`;
+                ? `${api_url}/devices?keyword=${encodeURIComponent(keyword)}`
+                : `${api_url}/devices`;
             
             const response = await fetch(url);
             if (response.ok) {
@@ -45,9 +47,12 @@ const IOTManagement = () => {
         }
     };
 
+    // Đã sửa: Lọc theo thuộc tính 'active' (kiểu boolean)
     const displayedDevices = devices.filter(device => {
         if (statusFilter === "ALL") return true;
-        return device.status === statusFilter;
+        if (statusFilter === "ACTIVE") return device.active === true;
+        if (statusFilter === "INACTIVE") return device.active === false;
+        return true;
     });
 
     const indexOfLast = currentPage * devicesPerPage;
@@ -58,24 +63,27 @@ const IOTManagement = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        const { name, value, type, checked } = e.target;
+        // Xử lý riêng cho checkbox trạng thái
+        const val = type === 'checkbox' ? checked : value;
+        setFormData({ ...formData, [name]: val });
     };
 
     const openAddModal = () => {
         setIsEditing(false);
-        setFormData({ id: "", deviceName: "", deviceType: "", status: "ACTIVE" });
+        setFormData({ id: "", deviceCode: "", type: "", location: "", slotId: "", active: true });
         setShowModal(true);
     };
 
     const openEditModal = (device) => {
         setIsEditing(true);
-        // Đảm bảo dữ liệu cũ đổ vào form đúng chuẩn
         setFormData({
             id: device.id,
-            deviceName: device.deviceName || "",
-            deviceType: device.deviceType || "",
-            status: device.status || "ACTIVE"
+            deviceCode: device.deviceCode || "",
+            type: device.type || "",
+            location: device.location || "",
+            slotId: device.slotId || "",
+            active: device.active !== undefined ? device.active : true
         });
         setShowModal(true);
     };
@@ -85,8 +93,8 @@ const IOTManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const url = isEditing 
-            ? `${api_url}/api/devices/${formData.id}` 
-            : `${api_url}/api/devices`;
+            ? `${api_url}/devices/${formData.id}` 
+            : `${api_url}/devices`;
         const method = isEditing ? "PUT" : "POST";
 
         const dataToSend = { ...formData };
@@ -104,18 +112,17 @@ const IOTManagement = () => {
                 fetchDevices(); 
                 closeModal();
             } else {
-                const errorMsg = await response.text();
-                alert(`Lỗi Backend (Mã ${response.status}): Không thể lưu!\nChi tiết: ${errorMsg}`);
+                alert(`Lỗi lưu dữ liệu. Mã lỗi: ${response.status}`);
             }
         } catch (error) {
-            alert("Lỗi kết nối mạng tới Spring Boot (Cổng 5000)!");
+            alert("Lỗi kết nối tới Server Spring Boot!");
         }
     };
 
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa thiết bị này?")) {
             try {
-                const response = await fetch(`${api_url}/api/devices/${id}`, { method: "DELETE" });
+                const response = await fetch(`${api_url}/devices/${id}`, { method: "DELETE" });
                 if (response.ok) {
                     fetchDevices();
                 } else {
@@ -144,18 +151,16 @@ const IOTManagement = () => {
                                 </svg>
                                 <input
                                     type="text"
-                                    placeholder="Tìm tên thiết bị..."
+                                    placeholder="Tìm mã thiết bị..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onKeyDown={(e) => {if (e.key === 'Enter') fetchDevices(searchTerm); }}
                                 />
                             </div>
                             
-                            {/* ĐÃ SỬA: Đổi setRoleFilter thành setStatusFilter */}
                             <select className="filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                                 <option value="ALL">Tất cả trạng thái</option>
                                 <option value="ACTIVE">Đang hoạt động</option>
-                                <option value="MAINTENANCE">Bảo trì</option>
                                 <option value="INACTIVE">Ngừng hoạt động</option>
                             </select>
                         </div>
@@ -167,8 +172,9 @@ const IOTManagement = () => {
                     <table className="iot-table">
                         <thead>
                             <tr>
-                                <th>Tên thiết bị</th>
+                                <th>Mã thiết bị</th>
                                 <th>Loại</th>
+                                <th>Vị trí</th>
                                 <th>Trạng thái</th>
                                 <th className="action-col">Thao tác</th>
                             </tr>
@@ -179,15 +185,16 @@ const IOTManagement = () => {
                                     <tr key={device.id}>
                                         <td className="device-info-cell">
                                             <div className="device-icon">📟</div>
-                                            {/* ĐÃ SỬA: lấy device.deviceName thay vì device.name */}
-                                            <span className="device-name">{device.deviceName || "N/A"}</span>
+                                            {/* Đã sửa: Dùng deviceCode */}
+                                            <span className="device-name">{device.deviceCode || "N/A"}</span>
                                         </td>
-                                        {/* ĐÃ SỬA: lấy device.deviceType thay vì device.type */}
-                                        <td><span className="text-gray">{device.deviceType || "Cảm biến"}</span></td>
+                                        {/* Đã sửa: Dùng type */}
+                                        <td><span className="text-gray">{device.type || "N/A"}</span></td>
+                                        <td><span className="text-gray">{device.location || "N/A"}</span></td>
                                         <td>
-                                            <span className={`status-badge ${device.status?.toLowerCase()}`}>
-                                                {device.status === "ACTIVE" ? "Hoạt động" : 
-                                                 device.status === "MAINTENANCE" ? "Bảo trì" : "Tắt"}
+                                            {/* Đã sửa: Dựa vào boolean active */}
+                                            <span className={`status-badge ${device.active ? 'active' : 'inactive'}`}>
+                                                {device.active ? "Hoạt động" : "Tắt"}
                                             </span>
                                         </td>
                                         <td className="actions">
@@ -198,12 +205,13 @@ const IOTManagement = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="empty-state">Không tìm thấy thiết bị nào.</td>
+                                    <td colSpan="5" className="empty-state">Không tìm thấy thiết bị nào.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
 
+                    {/* Pagination giữ nguyên */}
                     {totalPages > 1 && (
                         <div className="pagination">
                             <button className="page-btn" disabled={currentPage === 1} onClick={() => paginate(currentPage - 1)}>Trước</button>
@@ -217,28 +225,34 @@ const IOTManagement = () => {
                     )}
                 </div>
 
+                {/* Modal Thêm/Sửa */}
                 {showModal && (
                     <div className="modal-overlay">
                         <div className="modal-content">
                             <h3>{isEditing ? "Cập nhật thiết bị" : "Thêm thiết bị mới"}</h3>
                             <form className="iot-form" onSubmit={handleSubmit}>
                                 <div className="form-group">
-                                    <label>Tên thiết bị</label>
-                                    {/* ĐÃ SỬA: name="deviceName" */}
-                                    <input type="text" name="deviceName" value={formData.deviceName} onChange={handleInputChange} required />
+                                    <label>Mã thiết bị (Code)</label>
+                                    <input type="text" name="deviceCode" value={formData.deviceCode} onChange={handleInputChange} placeholder="VD: ESP32-01" required />
                                 </div>
                                 <div className="form-group">
                                     <label>Loại thiết bị</label>
-                                    {/* ĐÃ SỬA: name="deviceType" */}
-                                    <input type="text" name="deviceType" value={formData.deviceType} onChange={handleInputChange} placeholder="Ví dụ: Barrier, Camera..." required />
+                                    <select name="type" value={formData.type} onChange={handleInputChange} required>
+                                        <option value="">-- Chọn loại --</option>
+                                        <option value="SENSOR">Cảm biến (SENSOR)</option>
+                                        <option value="GATE">Barrier (GATE)</option>
+                                        <option value="CAMERA">Camera (CAMERA)</option>
+                                    </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>Trạng thái</label>
-                                    <select name="status" value={formData.status} onChange={handleInputChange}>
-                                        <option value="ACTIVE">Hoạt động</option>
-                                        <option value="MAINTENANCE">Bảo trì</option>
-                                        <option value="INACTIVE">Ngừng hoạt động</option>
-                                    </select>
+                                    <label>Vị trí</label>
+                                    <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="VD: Cổng A, Khu B1..." />
+                                </div>
+                                <div className="form-group">
+                                    <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+                                        <input type="checkbox" name="active" checked={formData.active} onChange={handleInputChange} style={{width: 'auto', margin: 0}} />
+                                        Thiết bị đang hoạt động (Active)
+                                    </label>
                                 </div>
                                 <div className="modal-actions">
                                     <button type="button" className="btn-cancel" onClick={closeModal}>Hủy</button>

@@ -1,125 +1,228 @@
-/* Duc Huy - Chức năng: Manual Gate Control (Demo) */
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./css/manualgatecontrol.css";
+import { useAuth } from "../../context/AuthContext";
 
-import React, { useState, useEffect } from 'react';
-import "../management/css/usermanagement.css"; 
+const API = "http://localhost:5000/api/gates";
 
 const ManualGateControl = () => {
-    const [user, setUser] = useState(null);
-    const [gates, setGates] = useState([
-        { id: 1, name: "Cổng VÀO (Lý Thường Kiệt)", status: "CLOSED" },
-        { id: 2, name: "Cổng RA (Lý Thường Kiệt)", status: "CLOSED" },
-        { id: 3, name: "Cổng VÀO (Tạ Quang Bửu)", status: "OPEN" },
-    ]);
-    const [bigMessage, setBigMessage] = useState({ text: "", type: "" });
+    const { user, token } = useAuth();
+    const [gates, setGates] = useState([]);
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedGate, setSelectedGate] = useState(null);
+    const [reason, setReason] = useState("");
+
+    const canControl = user?.role === "ADMIN" || user?.role === "STAFF";
 
     useEffect(() => {
-        // Kiểm tra quyền giống các trang khác
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+        fetchGates();
+        fetchLogs();
     }, []);
 
-    // Phân quyền: Chỉ Staff hoặc Admin mới được bấm nút điều khiển
-    const canControl = user && (user.role === "ADMIN" || user.role === "PARKING_STAFF");
-
-    const handleGateToggle = (id) => {
-        setGates(prev => prev.map(gate => {
-            if (gate.id === id) {
-                const newStatus = gate.status === "OPEN" ? "CLOSED" : "OPEN";
-                
-                // Hiệu ứng "hiện chữ to đùng" như yêu cầu trong tài liệu 
-                setBigMessage({ 
-                    text: `HỆ THỐNG ĐÃ ${newStatus === "OPEN" ? "MỞ" : "ĐÓNG"} ${gate.name.toUpperCase()}`, 
-                    type: newStatus 
-                });
-
-                // Tự động ẩn thông báo to sau 3 giây
-                setTimeout(() => setBigMessage({ text: "", type: "" }), 3000);
-
-                return { ...gate, status: newStatus };
-            }
-            return gate;
-        }));
+    const authHeader = {
+        headers: { Authorization: `Bearer ${token}` },
     };
 
+    const fetchGates = async () => {
+        try {
+            const res = await axios.get(API, authHeader);
+            setGates(res.data);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchLogs = async () => {
+        try {
+            const res = await axios.get(`${API}/logs`, authHeader);
+            setLogs(res.data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const handleAction = async (gate, action) => {
+        if (!canControl) return;
+
+        if (!reason.trim()) {
+            alert("Vui lòng nhập lý do thao tác!");
+            return;
+        }
+
+        try {
+            await axios.post(
+                `${API}/${gate.id}/${action.toLowerCase()}`,
+                {
+                    reason: reason // Body bây giờ chỉ gửi mỗi reason (khớp với DTO của bạn)
+                },
+                {
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        staffId: user.id // Đẩy staffId lên Header ở đây
+                    }
+                }
+            );
+
+            await fetchGates();
+            await fetchLogs();
+            setReason("");
+            setSelectedGate(null);
+        } catch (e) {
+            console.error(e);
+            alert("Thao tác thất bại!");
+        }
+    };
+
+    const getStatusClass = (status) => {
+        if (!status) return "unknown";
+        if (typeof status === "object") status = status.value;
+        return String(status).toLowerCase();
+    };
+
+    const formatTime = (timeStr) => {
+        if (!timeStr) return "";
+        const date = new Date(timeStr);
+        return date.toLocaleString('vi-VN', { 
+            hour: '2-digit', minute: '2-digit', second: '2-digit', 
+            day: '2-digit', month: '2-digit', year: 'numeric' 
+        });
+    };
+
+    if (loading) return (
+        <div className="gate-loading">
+            <div className="spinner"></div>
+            <p>Đang tải dữ liệu cổng...</p>
+        </div>
+    );
+
     return (
-        <div className="um-page">
-            
-            <div className="um-container">
-                <div className="um-header" style={{ textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '2.5rem', color: '#032b5f' }}>
-                        {canControl ? "Bảng Điều Khiển Cổng Thủ Công" : "Trạng Thái Cổng Ra Vào"}
-                    </h2>
-                    <p style={{ color: '#666' }}>Port Frontend: 8080 | Chế độ: {canControl ? "Quản trị viên" : "Công cộng (Chỉ xem)"} </p>
+        <div className="gate-page-wrapper">
+            <div className="gate-page-container">
+                
+                {/* HEADER */}
+                <header className="mgc-header">
+                    <div>
+                        <h2 className="mgc-title">
+                            <svg className="mgc-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            Điều Khiển Cổng Thủ Công
+                        </h2>
+                        <p className="mgc-subtitle">Quản lý và giám sát trạng thái ra/vào theo thời gian thực</p>
+                    </div>
+                </header>
+
+                {/* GATE GRID */}
+                <div className="gate-grid">
+                    {gates.map((g) => {
+                        const statusStr = getStatusClass(g.status);
+                        return (
+                            <div key={g.id} className={`gate-card status-${statusStr}`}>
+                                <div className="gate-card-header">
+                                    <div className="gate-icon-wrapper">
+                                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 19V4h-4V3H9v1H5v15H3v2h18v-2h-2zm-6 0H9V5h4v14z"/></svg>
+                                    </div>
+                                    <h3>{g.name}</h3>
+                                </div>
+
+                                <div className="gate-card-body">
+                                    <span className={`status-badge badge-${statusStr}`}>
+                                        {statusStr === "open" ? (
+                                            <><span className="dot dot-green"></span> ĐANG MỞ</>
+                                        ) : (
+                                            <><span className="dot dot-red"></span> ĐANG ĐÓNG</>
+                                        )}
+                                    </span>
+                                </div>
+
+                                {canControl && (
+                                    <div className="gate-card-footer">
+                                        <button className="btn-primary" onClick={() => setSelectedGate(g)}>
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            Điều khiển
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
-                {/* THÔNG BÁO TO ĐÙNG KHI BẤM NÚT  */}
-                {bigMessage.text && (
-                    <div style={{
-                        position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                        backgroundColor: bigMessage.type === "OPEN" ? "#4caf50" : "#f44336",
-                        color: 'white', padding: '50px 100px', borderRadius: '20px',
-                        fontSize: '3rem', fontWeight: 'bold', textAlign: 'center',
-                        boxShadow: '0 0 100px rgba(0,0,0,0.5)', zIndex: 1000,
-                        animation: 'zoomIn 0.3s ease'
-                    }}>
-                        {bigMessage.text}
+                {/* CONTROL MODAL */}
+                {selectedGate && (
+                    <div className="gate-modal-overlay fade-in">
+                        <div className="gate-modal-box slide-up">
+                            <div className="modal-header">
+                                <h3>Điều khiển: <span className="highlight">{selectedGate.name}</span></h3>
+                                <button className="btn-close-icon" onClick={() => setSelectedGate(null)}>✕</button>
+                            </div>
+                            
+                            <div className="modal-body">
+                                <label>Lý do can thiệp (Bắt buộc):</label>
+                                <textarea
+                                    placeholder="Ví dụ: Lỗi hệ thống quẹt thẻ, xe ưu tiên..."
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="modal-actions">
+                                <div className="action-buttons">
+                                    <button className="btn-action btn-open" onClick={() => handleAction(selectedGate, "OPEN")}>
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                        MỞ CỔNG
+                                    </button>
+                                    <button className="btn-action btn-close" onClick={() => handleAction(selectedGate, "CLOSE")}>
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                                        ĐÓNG CỔNG
+                                    </button>
+                                </div>
+                                <button className="btn-cancel" onClick={() => setSelectedGate(null)}>Hủy bỏ</button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
-                <div className="table-wrapper">
-                    <table className="um-table">
-                        <thead>
-                            <tr>
-                                <th>Mã Cổng</th>
-                                <th>Vị Trí Cổng</th>
-                                <th>Trạng Thái Hiện Tại</th>
-                                {canControl && <th>Thao Tác</th>}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {gates.map(gate => (
-                                <tr key={gate.id}>
-                                    <td>{gate.id}</td>
-                                    <td><strong>{gate.name}</strong></td>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <div style={{
-                                                width: '15px', height: '15px', borderRadius: '50%',
-                                                backgroundColor: gate.status === "OPEN" ? "#4caf50" : "#f44336",
-                                                boxShadow: `0 0 10px ${gate.status === "OPEN" ? "#4caf50" : "#f44336"}`
-                                            }}></div>
-                                            <span style={{ fontWeight: 'bold', color: gate.status === "OPEN" ? "#2e7d32" : "#c62828" }}>
-                                                {gate.status === "OPEN" ? "ĐANG MỞ" : "ĐANG ĐÓNG"}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    {canControl && (
-                                        <td className="actions">
-                                            <button 
-                                                className={gate.status === "OPEN" ? "btn-delete" : "btn-save"}
-                                                onClick={() => handleGateToggle(gate.id)}
-                                                style={{ width: '120px', padding: '10px' }}
-                                            >
-                                                {gate.status === "OPEN" ? "Đóng Cổng" : "Mở Cổng"}
-                                            </button>
-                                        </td>
-                                    )}
+                {/* LOGS TABLE */}
+                <div className="log-section">
+                    <div className="log-header">
+                        <h3><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Lịch sử thao tác</h3>
+                    </div>
+                    <div className="table-responsive">
+                        <table className="log-table">
+                            <thead>
+                                <tr>
+                                    <th>Cổng</th>
+                                    <th>Hành động</th>
+                                    <th>Lý do</th>
+                                    <th>Nhân viên</th>
+                                    <th>Thời gian</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {logs.length === 0 ? (
+                                    <tr><td colSpan="5" className="text-center empty-log">Chưa có lịch sử thao tác nào.</td></tr>
+                                ) : (
+                                    logs.map((l) => (
+                                        <tr key={l.id}>
+                                            <td className="font-medium">{l.gateId}</td>
+                                            <td>
+                                                <span className={`log-badge ${l.action.toLowerCase() === 'open' ? 'badge-open' : 'badge-closed'}`}>
+                                                    {l.action}
+                                                </span>
+                                            </td>
+                                            <td className="reason-text">{l.reason}</td>
+                                            <td>{l.staffId}</td>
+                                            <td className="time-text">{formatTime(l.timestamp)}</td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div style={{ marginTop: '30px', padding: '20px', background: '#fff3e0', borderLeft: '5px solid #ff9800', borderRadius: '8px' }}>
-                    <h4 style={{ margin: '0 0 10px 0', color: '#e65100' }}>⚠️ Hướng dẫn vận hành</h4>
-                    <p style={{ margin: 0, fontSize: '0.9rem' }}>
-                        {canControl 
-                            ? "Đây là bảng điều khiển khẩn cấp. Mọi hành động đóng/mở thủ công sẽ được ghi lại vào hệ thống giám sát của nhân viên trực." 
-                            : "Bạn đang xem trạng thái cổng thời gian thực. Nếu cổng không mở khi có thẻ hợp lệ, vui lòng liên hệ nhân viên bãi xe."}
-                    </p>
-                </div>
             </div>
         </div>
     );

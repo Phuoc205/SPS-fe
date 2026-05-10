@@ -9,8 +9,6 @@ import AdminRoutes from "./routes/AdminRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import Homepage from "./pages/homepage";
-
-import ParkingAvailability from "./pages/management/ParkingAvailability";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -24,7 +22,6 @@ function App() {
 
                 <Route path="/admin/*" element={<AdminRoutes />} />
                 <Route path="/staff/*" element={<StaffRoutes />} />
-                <Route path="/parking-availability" element={<ParkingAvailability />} />
                 <Route path="/*" element={<UserRoutes />} />
             </Routes>
         </AuthProvider>

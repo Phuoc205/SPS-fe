@@ -1,8 +1,6 @@
 /* Khanh Trinh */
 
 import React, { useState, useEffect } from 'react';
-import Header from "../components/header";
-import Footer from "../components/footer";
 import axios from 'axios';
 
 const Payment = () => {
@@ -123,11 +121,10 @@ const Payment = () => {
         setShowConfirmModal(false);
     };
 
-    if (loading) return <div><Header/><div style={{ padding: '20px' }}>Đang tải...</div><Footer/></div>;
+    if (loading) return <div><div style={{ padding: '20px' }}>Đang tải...</div></div>;
 
     return (
         <div style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Header/>
             
             <div style={{ padding: '40px 20px', flex: 1, maxWidth: '900px', margin: '0 auto', width: '100%' }}>
                 <h2 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>
@@ -219,8 +216,6 @@ const Payment = () => {
                     </div>
                 </div>
             )}
-
-            <Footer/>
         </div>
     );
 };
