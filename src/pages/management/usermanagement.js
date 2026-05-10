@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./css/usermanagement.css";
-
-const api_url = process.env.REACT_APP_API_URL;
+import Header from "../../components/header";
+import Footer from "../../components/footer";
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -13,12 +13,12 @@ const UserManagement = () => {
     // Thêm các state phục vụ Phân trang (Pagination)
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 8; // Giới hạn 8 người 1 trang
-
-    const api_url = process.env.REACT_APP_API_URL;
     
     const [formData, setFormData] = useState({
         id: "",
         name: "",
+        username: "", // Thêm dòng này
+        password: "", // Thêm dòng này
         email: "",
         cardId: "",
         role: "USER" 
@@ -36,13 +36,25 @@ const UserManagement = () => {
     const fetchUsers = async (keyword = "") => {
         try {
             const url = keyword 
-                ? `${api_url}/users?keyword=${encodeURIComponent(keyword)}` 
-                : "${api_url}/users";
+                ? `http://localhost:5000/api/users?keyword=${encodeURIComponent(keyword)}` 
+                : "http://localhost:5000/api/users";
             
-            const response = await fetch(url);
+            // Sửa chữ "token" thành "userToken" cho khớp với file login.js
+            const token = localStorage.getItem("userToken"); 
+            
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`, // Trình thẻ JWT ra
+                    "Content-Type": "application/json"
+                }
+            });
+
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data);
+            } else {
+                console.error("Lỗi từ server, có thể do Token:", response.status);
             }
         } catch (error) {
             console.error("Lỗi khi tải danh sách:", error);
@@ -70,7 +82,7 @@ const UserManagement = () => {
 
     const openAddModal = () => {
         setIsEditing(false);
-        setFormData({ id: "", name: "", email: "", cardId: "", role: "USER" });
+        setFormData({ id: "", name: "", username: "", password: "", email: "", cardId: "", role: "USER" }); // Thêm vào đây nữa
         setShowModal(true);
     };
 
@@ -93,9 +105,15 @@ const UserManagement = () => {
         if (!isEditing) delete dataToSend.id; 
 
         try {
+            // Đã đổi thành "userToken" chuẩn xác theo file login.js của nhóm 
+            const token = localStorage.getItem("userToken"); 
+
             const response = await fetch(url, {
                 method: method,
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // Kẹp thẻ Auth vào đây
+                },
                 body: JSON.stringify(dataToSend),
             });
 
@@ -103,7 +121,9 @@ const UserManagement = () => {
                 fetchUsers(); 
                 closeModal();
             } else {
-                alert(`Lỗi Backend (Mã ${response.status})`);
+                // Hiển thị lỗi rõ ràng hơn để dễ bắt bệnh nếu có
+                const errorData = await response.json().catch(() => null);
+                alert(`Lỗi Backend (Mã ${response.status}): ${errorData?.message || "Không xác định"}`);
             }
         } catch (error) {
             alert("Lỗi mạng không thể kết nối tới Backend!");
@@ -113,16 +133,31 @@ const UserManagement = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
             try {
-                const response = await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
-                if (response.ok) fetchUsers();
+                // Đã đổi thành "userToken"
+                const token = localStorage.getItem("userToken");
+
+                const response = await fetch(`http://localhost:5000/api/users/${id}`, { 
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}` // Kẹp thẻ Auth vào đây
+                    }
+                });
+
+                if (response.ok) {
+                    fetchUsers();
+                } else {
+                    alert(`Không thể xóa. Lỗi Backend (Mã ${response.status})`);
+                }
             } catch (error) {
                 console.error("Lỗi khi xóa:", error);
+                alert("Lỗi mạng khi thực hiện xóa!");
             }
         }
     };
 
     return (
         <div className="um-page">
+            <Header />
             
             <div className="um-container">
                 <div className="um-header">
@@ -153,9 +188,9 @@ const UserManagement = () => {
                             >
                                 <option value="ALL">Tất cả vai trò</option>
                                 <option value="USER">Sinh viên</option>
-                                <option value="PARKING_STAFF">Cán bộ</option>
+                                <option value="STAFF">Cán bộ/Nhân viên</option>
                                 <option value="ADMIN">Quản trị viên</option>
-                                <option value="VISITOR">Khách</option>
+                                
                             </select>
                         </div>
                         <button className="btn-add" onClick={openAddModal}>+ Thêm người dùng</button>
@@ -181,15 +216,16 @@ const UserManagement = () => {
                                             <div className="user-avatar">
                                                 {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                                             </div>
-                                            <span className="user-name">{user.name || "N/A"}</span>
+                                            <span className="user-name" style={{ color: '#111827', opacity: 1, fontWeight: 600 }}>
+    {user.name || "N/A"}
+</span>
                                         </td>
                                         <td><span className="text-gray">{user.email || "N/A"}</span></td>
                                         <td><span className="text-gray">{user.cardId || "N/A"}</span></td>
                                         <td>
                                             <span className={`role-badge ${user.role?.toLowerCase() || "user"}`}>
                                                 {user.role === "USER" ? "Sinh viên" : 
-                                                 user.role === "PARKING_STAFF" ? "Cán bộ" : 
-                                                 user.role === "VISITOR" ? "Khách" : 
+                                                 user.role === "STAFF" ? "Cán bộ/Nhân viên" :                                                   
                                                  user.role === "ADMIN" ? "Quản trị viên" : "N/A"}
                                             </span>
                                         </td>
@@ -250,7 +286,17 @@ const UserManagement = () => {
                                 <div className="form-group">
                                     <label>Họ và tên</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
+                                </div>                                
+                                <div className="form-group">
+                                    <label>Tên đăng nhập</label>                                    
+                                    <input type="text" name="username" value={formData.username || ""} onChange={handleInputChange} required readOnly={isEditing} style={{ backgroundColor: isEditing ? '#f3f4f6' : 'white' }} />
                                 </div>
+                                {!isEditing && (
+                                    <div className="form-group">
+                                        <label>Mật khẩu</label>
+                                        <input type="password" name="password" value={formData.password || ""} onChange={handleInputChange} required />
+                                    </div>
+                                )}
                                 <div className="form-group">
                                     <label>Email</label>
                                     <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
@@ -263,9 +309,9 @@ const UserManagement = () => {
                                     <label>Vai trò</label>
                                     <select name="role" value={formData.role} onChange={handleInputChange}>
                                         <option value="USER">Sinh viên</option>
-                                        <option value="PARKING_STAFF">Cán bộ/Nhân viên</option>
+                                        <option value="STAFF">Cán bộ/Nhân viên</option>
                                         <option value="ADMIN">Quản trị viên</option>
-                                        <option value="VISITOR">Khách vãng lai</option>
+                                        
                                     </select>
                                 </div>
                                 <div className="modal-actions">
@@ -277,6 +323,7 @@ const UserManagement = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };
