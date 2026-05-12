@@ -5,7 +5,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import HomePage from "../pages/homepage";
 import ParkingAction from "../pages/main/parkingaction";
 import ParkingHistory from "../pages/main/parkinghistory";
-import Payment from "../pages/payment"
+import Payment from "../pages/main/payment"
 const UserRoutes = () => {
     return (
         
