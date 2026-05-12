@@ -1,27 +1,24 @@
 /* configprice.css */
 
-
 .configprice-page {
     position: relative;
-    min-height: calc(100vh - 70px); /*  chiều cao tối thiểu của trang */
+    min-height: calc(100vh - 70px);
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 56px 24px;             /* khoảng cách trên/dưới trang */
+    padding: 56px 24px;
 
     background-image: url('https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&w=1600&q=80');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    background-attachment: fixed;   
+    background-attachment: fixed;
 }
 
-/* Overlay tối + blur để chữ/card nổi bật */
 .configprice-page::before {
     content: '';
     position: absolute;
     inset: 0;
-    /*  thay độ tối của overlay */
     background: linear-gradient(
         160deg,
         rgba(7, 11, 30, 0.72) 0%,
@@ -31,26 +28,24 @@
     pointer-events: none;
 }
 
-/* chieu dài + rộng tong the cua table */
 .configprice-wrapper {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 1060px;  /* size table */
+    max-width: 1160px;
 }
 
-/* bảng chính  */
 .configprice-box {
     background: rgba(255, 255, 255, 0.97);
-    border-radius: 24px;            /* bo góc */ 
-    padding: 44px 52px;             /*  tăng để table rộng hơn */
+    border-radius: 24px;
+    padding: 44px 52px;
     box-shadow:
         0 32px 80px rgba(0, 0, 0, 0.28),
         0 0 0 1px rgba(255,255,255,0.06);
     animation: cpFadeIn 0.4s ease;
 }
 
-/* HEADER – logo + tiêu đề + mô tả */
+/* ── HEADER ────────────────────────────────────────────── */
 .configprice-header {
     display: flex;
     flex-direction: column;
@@ -59,7 +54,7 @@
 }
 
 .configprice-logo {
-    width: 120px;            /* kích thước logo */
+    width: 120px;
     height: auto;
     margin-bottom: 14px;
     object-fit: contain;
@@ -68,7 +63,7 @@
 
 .configprice-box h1 {
     margin: 0 0 10px;
-    font-size: 1.85rem;     /* cỡ chữ tiêu đề chính */
+    font-size: 1.85rem;
     font-weight: 800;
     color: #0f172a;
     text-align: center;
@@ -79,39 +74,81 @@
 .configprice-intro {
     margin: 0;
     color: #64748b;
-    font-size: 1rem;        /*  cỡ chữ mô tả dưới tiêu đề */
+    font-size: 1rem;
     line-height: 1.7;
     text-align: center;
-    max-width: 580px;
+    max-width: 600px;
 }
 
-/* open buton , trạng thái khi chưa mở bảng */
+/* ── OPEN BUTTON ───────────────────────────────────────── */
 .configprice-open-action {
     display: flex;
     justify-content: center;
     margin-bottom: 8px;
 }
 
-/* action bar */
+/* ── TOP ACTION BAR ────────────────────────────────────── */
 .configprice-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 22px;
-    padding-bottom: 22px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
     border-bottom: 1px solid #e2e8f0;
     align-items: center;
 }
 
-/* nút chương trình  */
+/* ── TWO TABLES LAYOUT ─────────────────────────────────── */
+.cp-two-tables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+/* ── VEHICLE SECTION ───────────────────────────────────── */
+.cp-vehicle-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cp-vehicle-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.cp-vehicle-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.cp-vehicle-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+/* Bottom action per table */
+.cp-vehicle-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── BUTTONS ───────────────────────────────────────────── */
 .cp-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 20px;     /*  padding nút */
+    padding: 10px 20px;
     border-radius: 10px;
     border: 1.5px solid transparent;
-    font-size: 0.9rem;      /*cỡ chữ nút */
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s;
@@ -119,43 +156,41 @@
     line-height: 1;
 }
 
-/* Primary */
+.cp-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
 .cp-btn-primary {
     background: #1e40af;
     color: #fff;
     border-color: #1e40af;
 }
-.cp-btn-primary:hover {
+.cp-btn-primary:not(:disabled):hover {
     background: #1d3a9e;
     border-color: #1d3a9e;
     box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
 }
 
-/* Outline */
 .cp-btn-outline {
     background: transparent;
     color: #1e40af;
     border-color: #1e40af;
 }
-.cp-btn-outline:hover {
-    background: #eff6ff;
-}
+.cp-btn-outline:hover { background: #eff6ff; }
 
-/* Neutral */
 .cp-btn-neutral {
     background: #f1f5f9;
     color: #334155;
     border-color: #e2e8f0;
 }
-.cp-btn-neutral:hover {
-    background: #e2e8f0;
-}
+.cp-btn-neutral:hover { background: #e2e8f0; }
 
-/* Ghost – Đóng bảng */
 .cp-btn-ghost {
     background: transparent;
-    color: #475569;          /*  màu chữ nút Đóng bảng */
-    border-color: #cbd5e1;   
+    color: #475569;
+    border-color: #cbd5e1;
 }
 .cp-btn-ghost:hover {
     background: #f1f5f9;
@@ -163,7 +198,6 @@
     border-color: #94a3b8;
 }
 
-/* Danger */
 .cp-btn-danger {
     background: #ef4444;
     color: #fff;
@@ -175,24 +209,20 @@
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* Small size */
 .cp-btn-sm {
-    padding: 6px 13px;      /*  nút Xoá trong bảng */
+    padding: 6px 13px;
     font-size: 0.8rem;
     border-radius: 7px;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MESSAGE BANNER
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ── MESSAGE BANNER ────────────────────────────────────── */
 .configprice-message {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 22px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    font-size: 0.9rem;      /* cỡ chữ message */
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
     font-weight: 600;
     background: #ecfdf5;
     border: 1px solid #bbf7d0;
@@ -204,18 +234,17 @@
     color: #7f1d1d;
 }
 
-/* table wrapper */
+/* ── TABLE ─────────────────────────────────────────────── */
 .configprice-table-wrapper {
     overflow-x: auto;
     border-radius: 14px;
     border: 1px solid #e2e8f0;
 }
 
-/* table */
 .configprice-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 640px;
+    min-width: 340px;
 }
 
 .configprice-table thead tr {
@@ -223,9 +252,9 @@
 }
 
 .configprice-table th {
-    padding: 14px 16px;     /*  padding header của bảng */
+    padding: 12px 14px;
     text-align: left;
-    font-size: 0.78rem;     /*  cỡ chữ header bảng */
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
@@ -235,48 +264,40 @@
 }
 
 .configprice-table td {
-    padding: 14px 16px;     /* padding từng ô trong bảng */
+    padding: 13px 14px;
     border-bottom: 1px solid #f1f5f9;
     color: #1e293b;
-    font-size: 0.92rem;     /* cỡ chữ nội dung bảng */
+    font-size: 0.9rem;
     vertical-align: middle;
 }
 
-/* Zebra rows */
-.configprice-table tbody tr:nth-child(even) td {
-    background: #f8fafc;
-}
-
-/* Hover */
+.configprice-table tbody tr:nth-child(even) td { background: #f8fafc; }
 .configprice-table tbody tr:hover td {
     background: #eff6ff;
     transition: background 0.12s;
 }
+.configprice-table tbody tr:last-child td { border-bottom: none; }
 
-/* Last row */
-.configprice-table tbody tr:last-child td {
-    border-bottom: none;
-}
+.configprice-table tr.cp-row-new td     { background: #f0fdf4 !important; }
+.configprice-table tr.cp-row-changed td { background: #fefce8 !important; }
 
-/* New row */
-.configprice-table tr.cp-row-new td {
-    background: #f0fdf4 !important;
-}
-
-/* Changed row */
-.configprice-table tr.cp-row-changed td {
-    background: #fefce8 !important;
+/* Type badge (read-only label) */
+.cp-type-badge {
+    display: inline-block;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.9rem;
 }
 
 /* Index column */
 .cp-idx {
     color: #cbd5e1;
     font-size: 0.8rem;
-    width: 36px;
+    width: 32px;
     text-align: center;
 }
 
-/* Current price */
+/* Current price cell */
 .cp-price-current {
     display: flex;
     flex-direction: column;
@@ -287,44 +308,27 @@
     color: #0f172a;
     font-variant-numeric: tabular-nums;
 }
+
 .cp-unit {
     font-size: 0.72rem;
     color: #94a3b8;
-    display: block;
 }
 
-/* select input  */
-.cp-select {
-    padding: 8px 11px;      /*  padding dropdown */
-    border: 1.5px solid #cbd5e1;
-    border-radius: 9px;
-    font-size: 0.9rem;      /*  cỡ chữ dropdown */
-    color: #1e293b;
-    background: #fff;
-    cursor: pointer;
-    min-width: 120px;
-    transition: border-color 0.15s;
-}
-.cp-select:focus {
-    outline: none;
-    border-color: #1e40af;
-    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
-}
-
+/* Input */
 .cp-input {
     width: 100%;
-    max-width: 200px;       /*  chiều rộng ô nhập giá mới */
-    padding: 9px 12px;
+    max-width: 160px;
+    padding: 8px 11px;
     border: 1.5px solid #cbd5e1;
     border-radius: 9px;
-    font-size: 0.9rem;      /*  cỡ chữ input */
+    font-size: 0.88rem;
     color: #1e293b;
     background: #fff;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 .cp-input::placeholder {
     color: #94a3b8;
-    font-size: 0.83rem;
+    font-size: 0.82rem;
 }
 .cp-input:focus {
     outline: none;
@@ -336,18 +340,17 @@
     background: #fffbeb;
 }
 
-/* price */
+/* Preview */
 .cp-preview {
     font-weight: 700;
     color: #94a3b8;
     font-variant-numeric: tabular-nums;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    white-space: nowrap;
 }
-.cp-preview.cp-preview-changed {
-    color: #16a34a;
-}
+.cp-preview.cp-preview-changed { color: #16a34a; }
 
-/* loading  */
+/* Loading */
 .configprice-center-cell {
     text-align: center !important;
     padding: 36px !important;
@@ -361,31 +364,24 @@
     color: #64748b;
 }
 
-/* animation */
+/* ── ANIMATION ─────────────────────────────────────────── */
 @keyframes cpFadeIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* responsive */
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .cp-two-tables {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+
 @media (max-width: 768px) {
-    .configprice-page {
-        padding: 28px 14px;     /*  trang trên mobile */
-    }
-    .configprice-box {
-        padding: 28px 20px;     /* table trên mobile */
-    }
-    .configprice-box h1 {
-        font-size: 1.4rem;      /*  tiêu đề trên mobile */
-    }
-    .configprice-actions {
-        gap: 8px;
-    }
-    .cp-btn {
-        padding: 8px 14px;
-        font-size: 0.83rem;
-    }
-    .cp-input {
-        max-width: 100%;
-    }
+    .configprice-page  { padding: 28px 14px; }
+    .configprice-box   { padding: 28px 20px; }
+    .configprice-box h1 { font-size: 1.4rem; }
+    .cp-btn            { padding: 8px 14px; font-size: 0.83rem; }
+    .cp-input          { max-width: 100%; }
 }
