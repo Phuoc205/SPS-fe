@@ -1,218 +1,246 @@
-/* Khanh Trinh */
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Header from '../components/header';
+import Footer from '../components/footer';
+
+// Hàm xử lý chống lỗi Invalid Date của Spring Boot
+const formatTime = (timeData) => {
+    if (!timeData) return 'Đang cập nhật...';
+    // Nếu Spring Boot trả về mảng [2026, 5, 12, 14, 15, 2]
+    if (Array.isArray(timeData)) {
+        const [y, m, d, h, min, s] = timeData;
+        return new Date(y, m - 1, d, h || 0, min || 0, s || 0).toLocaleString('vi-VN');
+    }
+    // Nếu trả về chuỗi ISO string bình thường
+    return new Date(timeData).toLocaleString('vi-VN');
+};
 
 const Payment = () => {
-    // Port 5000 theo API document
     const API_URL = 'http://localhost:5000';
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+    const [user] = useState(JSON.parse(localStorage.getItem('user')) || {});
+    const [token] = useState(localStorage.getItem('userToken'));
     
-    // States lưu dữ liệu
-    const [historyData, setHistoryData] = useState([]);
-    const [paymentHistory, setPaymentHistory] = useState(JSON.parse(localStorage.getItem('local_payment_history')) || []);
-    
-    // States xử lý UI
+    const [invoices, setInvoices] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [processing, setProcessing] = useState(false);
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
     
-    // States dữ liệu thanh toán
     const [totalDebt, setTotalDebt] = useState(0);
-    const [paymentId, setPaymentId] = useState(null);
+    const [showBKPay, setShowBKPay] = useState(false);
+    const [payStep, setPayStep] = useState(1); 
+
+    // State cho việc Sắp xếp (Sort)
+    const [sortOption, setSortOption] = useState('TIME_DESC');
+
+    const fetchData = async () => {
+        if (!user?.id) return;
+        try {
+            const headers = { Authorization: `Bearer ${token}` };
+            const [invRes, payRes] = await Promise.all([
+                axios.get(`${API_URL}/api/invoices/user/${user.id}`, { headers }).catch(() => ({ data: [] })),
+                axios.get(`${API_URL}/api/billing/user/history?userId=${user.id}`, { headers }).catch(() => ({ data: [] }))
+            ]);
+            
+            const pendingInvs = (invRes.data || []).filter(inv => inv.status === 'GENERATED' || inv.status === 'UNPAID');
+            setInvoices(pendingInvs);
+            
+            // Tính tổng nợ
+            const debt = pendingInvs.reduce((acc, curr) => acc + (curr.totalAmount || curr.total_amount || 0), 0);
+            setTotalDebt(debt);
+
+            // Lưu danh sách gốc
+            setPayments(payRes.data || []);
+            
+        } catch (err) {
+            console.error("Lỗi:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchUnpaidHistory = async () => {
-            try {
-                const token = localStorage.getItem('userToken');
-                const response = await axios.get(`${API_URL}/api/history/user/${user.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setHistoryData(response.data);
-            } catch (err) {
-                console.error('Lỗi tải dữ liệu gửi xe:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+        fetchData();
+    }, [user.id, token]);
 
-        if (user.id) fetchUnpaidHistory();
-        else setLoading(false);
-    }, [user.id]);
-
-    // Lọc ra các phiên đã kết thúc (FINISHED) để chuẩn bị thanh toán
-    // Lưu ý: Sẽ lấy hết FINISHED, cần BE xử lý không tính tiền các session đã thanh toán
-    const unpaidSessions = historyData.filter(item => item.status === 'FINISHED');
-
-    // 1. GỌI API KHỞI TẠO THANH TOÁN (Lấy mã thanh toán và tính tổng nợ)
-    const calculateDebt = async () => {
-        if (unpaidSessions.length === 0) return;
-        setProcessing(true);
-        try {
-            const token = localStorage.getItem('userToken');
-            // Lấy danh sách ID để gửi lên server
-            const sessionIds = unpaidSessions.map(item => item.sessionId);
-
-            // API: POST /api/payments
-            // Input: { "sessionIds": [1, 2, 3] }
-            const response = await axios.post(`${API_URL}/api/payments`, 
-                { sessionIds: sessionIds }, 
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            // Output nhận được: { id: 4, amount: 50000, status: "PENDING", sessionIds: [...] }
-            setTotalDebt(response.data.amount);
-            setPaymentId(response.data.id); 
-        } catch (err) {
-            console.error('Lỗi khi tính tổng nợ:', err);
-            alert('Lỗi hệ thống: Không thể kết nối với cổng thanh toán.');
-        } finally {
-            setProcessing(false);
-        }
+    const handleStartPay = () => {
+        if(totalDebt <= 0) return;
+        setPayStep(1);
+        setShowBKPay(true);
     };
 
-    // 2. HIỂN THỊ MODAL XÁC NHẬN
-    const handlePayment = () => {
-        if (!paymentId) return;
-        setShowConfirmModal(true);
-    };
-
-    // 3. THỰC THI THANH TOÁN SAU KHI XÁC NHẬN
-    const confirmPayment = async () => {
-        setShowConfirmModal(false);
-        setProcessing(true);
+    const handleConfirmPay = async () => {
+        setPayStep(2); 
         try {
-            const token = localStorage.getItem('userToken');
-
-            // API: POST /api/payments/{id}/pay
-            // Input: None
-            const response = await axios.post(`${API_URL}/api/payments/${paymentId}/pay`, {}, {
+            await axios.post(`${API_URL}/api/billing/user/pay-all?userId=${user.id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            // Output nhận được: { id: 1, amount: 20000, status: "PAID", message: "Payment success" }
-            if (response.data.status === 'PAID') {
-                alert(`Thanh toán thành công số tiền ${response.data.amount} VND!`);
-                
-                // Lưu vào local history để UI có chỗ hiển thị "Lịch sử thanh toán" (Bù đắp việc thiếu API)
-                const newRecord = {
-                    id: response.data.id,
-                    amount: response.data.amount,
-                    date: new Date().toISOString()
-                };
-                const updatedHistory = [newRecord, ...paymentHistory];
-                setPaymentHistory(updatedHistory);
-                localStorage.setItem('local_payment_history', JSON.stringify(updatedHistory));
-
-                // Reset trạng thái
-                setTotalDebt(0);
-                setPaymentId(null);
-                window.location.reload(); 
-            }
+            setPayStep(3); 
+            setTimeout(() => {
+                setShowBKPay(false);
+                fetchData(); 
+            }, 2000);
         } catch (err) {
-            console.error('Lỗi khi thanh toán:', err);
-            alert('Thanh toán thất bại, vui lòng thử lại.');
-        } finally {
-            setProcessing(false);
+            console.error("Lỗi thanh toán:", err);
+            alert("Có lỗi xảy ra trong quá trình thanh toán, vui lòng thử lại!");
+            setPayStep(1);
         }
     };
 
-    const cancelPayment = () => {
-        setShowConfirmModal(false);
-    };
+    // XỬ LÝ SẮP XẾP LỊCH SỬ GIAO DỊCH
+    const sortedPayments = [...payments].sort((a, b) => {
+        const timeA = new Date(a.createdAt || a.created_at).getTime() || 0;
+        const timeB = new Date(b.createdAt || b.created_at).getTime() || 0;
+        const priceA = a.amount || a.total_amount || 0;
+        const priceB = b.amount || b.total_amount || 0;
 
-    if (loading) return <div><div style={{ padding: '20px' }}>Đang tải...</div></div>;
+        switch (sortOption) {
+            case 'TIME_DESC': return timeB - timeA; // Mới nhất
+            case 'TIME_ASC': return timeA - timeB;  // Cũ nhất
+            case 'PRICE_DESC': return priceB - priceA; // Giá lớn nhất
+            case 'PRICE_ASC': return priceA - priceB;  // Giá nhỏ nhất
+            default: return timeB - timeA;
+        }
+    });
 
     return (
-        <div style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            
-            <div style={{ padding: '40px 20px', flex: 1, maxWidth: '900px', margin: '0 auto', width: '100%' }}>
-                <h2 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>
-                    Thanh toán phí đỗ xe
-                </h2>
+        <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', sans-serif" }}>
+            <Header />
 
-                {/* KHU VỰC THAO TÁC */}
-                <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h3 style={{ margin: 0, color: '#34495e' }}>Phiên chưa thanh toán: <span style={{ color: '#e74c3c' }}>{unpaidSessions.length}</span> lượt</h3>
-                        <button 
-                            onClick={calculateDebt} 
-                            disabled={unpaidSessions.length === 0 || processing || paymentId !== null}
-                            style={{ padding: '10px 20px', backgroundColor: (unpaidSessions.length === 0 || paymentId) ? '#bdc3c7' : '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
-                        >
-                            {processing && !paymentId ? 'Đang tính toán...' : 'Lập hóa đơn thanh toán'}
-                        </button>
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', backgroundColor: '#ecf0f1', borderRadius: '5px' }}>
-                        <h3 style={{ margin: 0 }}>Tổng nợ hiển thị: <span style={{ color: '#2980b9', fontSize: '24px' }}>{totalDebt.toLocaleString('vi-VN')} VNĐ</span></h3>
-                        <button 
-                            onClick={handlePayment} 
-                            disabled={!paymentId || processing}
-                            style={{ padding: '12px 30px', backgroundColor: !paymentId ? '#bdc3c7' : '#3498db', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}
-                        >
-                            {processing && paymentId ? 'Đang xử lý...' : 'Xác nhận thanh toán'}
-                        </button>
-                    </div>
+            <div style={{ flex: 1, padding: '40px 20px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
+                <div style={{ marginBottom: '40px' }}>
+                    <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#111827', margin: '0 0 10px 0' }}>Thanh toán dịch vụ</h2>
+                    <p style={{ color: '#6b7280', fontSize: '16px', margin: 0 }}>Quản lý hóa đơn đỗ xe định kỳ tích hợp cổng BKPay</p>
                 </div>
 
-                {/* KHU VỰC LỊCH SỬ THANH TOÁN (LOCAL) */}
-                <h3 style={{ color: '#2c3e50' }}>Lịch sử giao dịch (Local)</h3>
-                <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead style={{ backgroundColor: '#34495e', color: 'white' }}>
-                            <tr>
-                                <th style={{ padding: '15px' }}>Mã GD (ID)</th>
-                                <th style={{ padding: '15px' }}>Số tiền</th>
-                                <th style={{ padding: '15px' }}>Thời gian thanh toán</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paymentHistory.length > 0 ? paymentHistory.map((payment, index) => (
-                                <tr key={index} style={{ borderBottom: '1px solid #ecf0f1' }}>
-                                    <td style={{ padding: '15px' }}><strong>#{payment.id}</strong></td>
-                                    <td style={{ padding: '15px', color: '#27ae60', fontWeight: 'bold' }}>{payment.amount?.toLocaleString('vi-VN')} VNĐ</td>
-                                    <td style={{ padding: '15px' }}>{new Date(payment.date).toLocaleString('vi-VN')}</td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan="3" style={{ padding: '20px', textAlign: 'center', color: '#7f8c8d' }}>
-                                        Chưa có giao dịch thanh toán nào được ghi nhận.
-                                    </td>
-                                </tr>
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '100px', color: '#6b7280' }}>Đang đồng bộ dữ liệu tài chính...</div>
+                ) : (
+                    <>
+                        <div style={{ backgroundColor: 'white', borderRadius: '24px', padding: '30px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', marginBottom: '40px', border: totalDebt > 0 ? '1px solid #fecaca' : '1px solid #d1fae5' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                                <h3 style={{ margin: 0, color: totalDebt > 0 ? '#dc2626' : '#059669', fontSize: '20px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <span style={{ fontSize: '24px' }}>{totalDebt > 0 ? '🔔' : '🎉'}</span> TỔNG DƯ NỢ HIỆN TẠI
+                                </h3>
+                            </div>
+
+                            {totalDebt > 0 ? (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px 30px', backgroundColor: '#fef2f2', borderRadius: '16px', border: '1px dashed #fca5a5' }}>
+                                    <div>
+                                        <div style={{ color: '#991b1b', fontSize: '12px', fontWeight: '800', letterSpacing: '1px', marginBottom: '5px' }}>ĐÃ BAO GỒM {invoices.length} LƯỢT CHƯA THANH TOÁN</div>
+                                        <h2 style={{ margin: '0 0 5px 0', color: '#7f1d1d', fontSize: '45px', fontWeight: '900' }}>{totalDebt.toLocaleString()}đ</h2>
+                                        <p style={{ margin: 0, color: '#991b1b', fontSize: '14px' }}>Số tiền được cập nhật tự động tính đến hôm nay.</p>
+                                    </div>
+                                    <button 
+                                        onClick={handleStartPay}
+                                        style={{ backgroundColor: '#2563eb', color: 'white', padding: '16px 35px', borderRadius: '12px', border: 'none', fontWeight: '800', cursor: 'pointer', fontSize: '15px', boxShadow: '0 10px 20px rgba(37,99,235,0.25)', transition: 'background 0.2s' }}
+                                    >
+                                        THANH TOÁN TOÀN BỘ (BKPAY)
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{ textAlign: 'center', padding: '30px', backgroundColor: '#f0fdf4', color: '#059669', borderRadius: '16px', fontWeight: '700', fontSize: '16px' }}>
+                                    Tuyệt vời! Bạn không có khoản nợ nào cần thanh toán.
+                                </div>
                             )}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+
+                        <div style={{ backgroundColor: 'white', borderRadius: '24px', padding: '30px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', border: '1px solid #e5e7eb' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', flexWrap: 'wrap', gap: '15px' }}>
+                                <h3 style={{ margin: 0, color: '#111827', fontSize: '20px' }}>Lịch sử giao dịch</h3>
+                                
+                                {/* BỘ LỌC SẮP XẾP */}
+                                <div>
+                                    <select 
+                                        value={sortOption} 
+                                        onChange={(e) => setSortOption(e.target.value)}
+                                        style={{ padding: '10px 15px', borderRadius: '10px', border: '1px solid #cbd5e1', outline: 'none', backgroundColor: '#f8fafc', fontWeight: '600', color: '#475569', cursor: 'pointer' }}
+                                    >
+                                        <option value="TIME_DESC">Sắp xếp: Mới nhất</option>
+                                        <option value="TIME_ASC">Sắp xếp: Cũ nhất</option>
+                                        <option value="PRICE_DESC">Sắp xếp: Số tiền cao nhất</option>
+                                        <option value="PRICE_ASC">Sắp xếp: Số tiền thấp nhất</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                                    <thead style={{ backgroundColor: '#f8fafc' }}>
+                                        <tr>
+                                            <th style={{ padding: '18px 25px', color: '#6b7280', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase' }}>Mã GD</th>
+                                            <th style={{ padding: '18px 25px', color: '#6b7280', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase' }}>Thời gian</th>
+                                            <th style={{ padding: '18px 25px', color: '#6b7280', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase' }}>Số tiền</th>
+                                            <th style={{ padding: '18px 25px', color: '#6b7280', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase' }}>Cổng TT</th>
+                                            <th style={{ padding: '18px 25px', color: '#6b7280', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase' }}>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {sortedPayments.length > 0 ? sortedPayments.map(p => (
+                                            <tr key={p.paymentId} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                                <td style={{ padding: '20px 25px', fontWeight: '800', color: '#111827' }}>#{p.paymentId}</td>
+                                                <td style={{ padding: '20px 25px', color: '#4b5563' }}>{formatTime(p.createdAt || p.created_at)}</td>
+                                                <td style={{ padding: '20px 25px', fontWeight: '900', color: '#059669', fontSize: '16px' }}>+{(p.amount || p.total_amount)?.toLocaleString()}đ</td>
+                                                <td style={{ padding: '20px 25px' }}><span style={{ backgroundColor: '#eff6ff', color: '#1d4ed8', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '800' }}>{p.provider || 'BKPAY'}</span></td>
+                                                <td style={{ padding: '20px 25px' }}>
+                                                    <span style={{ backgroundColor: '#d1fae5', color: '#059669', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>● Đã thanh toán</span>
+                                                </td>
+                                            </tr>
+                                        )) : (
+                                            <tr><td colSpan="5" style={{ padding: '50px', textAlign: 'center', color: '#9ca3af' }}>Bạn chưa có dữ liệu giao dịch nào.</td></tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
-            {/* MODAL XÁC NHẬN THANH TOÁN */}
-            {showConfirmModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-                    <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', boxShadow: '0 5px 20px rgba(0,0,0,0.3)', maxWidth: '400px', textAlign: 'center' }}>
-                        <h3 style={{ color: '#2c3e50', marginTop: 0 }}>Xác nhận thanh toán</h3>
-                        <p style={{ fontSize: '16px', color: '#34495e' }}>Bạn có chắc chắn muốn thanh toán số tiền:</p>
-                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#e74c3c', margin: '20px 0' }}>
-                            {totalDebt.toLocaleString('vi-VN')} VNĐ
-                        </p>
-                        <p style={{ fontSize: '14px', color: '#7f8c8d', marginBottom: '20px' }}>
-                            Mã giao dịch: <strong>#{paymentId}</strong>
-                        </p>
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                            <button 
-                                onClick={cancelPayment}
-                                style={{ padding: '12px 25px', backgroundColor: '#95a5a6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
-                            >
-                                Huỷ
-                            </button>
-                            <button 
-                                onClick={confirmPayment}
-                                disabled={processing}
-                                style={{ padding: '12px 25px', backgroundColor: processing ? '#bdc3c7' : '#27ae60', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
-                            >
-                                {processing ? 'Đang xử lý...' : 'Xác nhận'}
-                            </button>
-                        </div>
+            <Footer />
+
+            {showBKPay && (
+                <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(17, 24, 39, 0.75)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
+                    <div style={{ backgroundColor: 'white', width: '420px', borderRadius: '32px', padding: '40px', textAlign: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.3)', position: 'relative', overflow: 'hidden' }}>
+                        
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'linear-gradient(90deg, #2563eb, #3b82f6)' }}></div>
+
+                        {payStep === 1 && (
+                            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                                <div style={{ width: '70px', height: '70px', backgroundColor: '#eff6ff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '32px', margin: '0 auto 20px' }}>💳</div>
+                                <h2 style={{ color: '#1e3a8a', margin: '0 0 10px 0', fontSize: '26px', fontWeight: '800' }}>Cổng BKPay</h2>
+                                <p style={{ color: '#6b7280', margin: '0 0 25px 0' }}>Xác nhận thanh toán gộp toàn bộ nợ phí đỗ xe.</p>
+                                
+                                <div style={{ backgroundColor: '#f8fafc', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0', marginBottom: '30px' }}>
+                                    <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>Tổng thanh toán</span>
+                                    <h1 style={{ margin: '5px 0 0 0', color: '#dc2626', fontSize: '42px', fontWeight: '900' }}>{totalDebt.toLocaleString()}đ</h1>
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '15px' }}>
+                                    <button onClick={() => setShowBKPay(false)} style={{ flex: 1, padding: '16px', borderRadius: '14px', border: 'none', background: '#f1f5f9', color: '#475569', fontWeight: '700', cursor: 'pointer' }}>HỦY BỎ</button>
+                                    <button onClick={handleConfirmPay} style={{ flex: 2, padding: '16px', borderRadius: '14px', border: 'none', background: '#2563eb', color: 'white', fontWeight: '800', cursor: 'pointer', boxShadow: '0 8px 15px rgba(37,99,235,0.25)' }}>XÁC NHẬN TRẢ</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {payStep === 2 && (
+                            <div style={{ padding: '40px 0', animation: 'fadeIn 0.3s ease' }}>
+                                <div style={{ width: '60px', height: '60px', border: '6px solid #f1f5f9', borderTop: '6px solid #2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 25px' }}></div>
+                                <h3 style={{ color: '#111827', fontSize: '22px', margin: '0 0 10px 0' }}>Đang kết nối BKPay...</h3>
+                                <p style={{ color: '#6b7280', margin: 0 }}>Vui lòng giữ nguyên màn hình</p>
+                            </div>
+                        )}
+
+                        {payStep === 3 && (
+                            <div style={{ padding: '30px 0', animation: 'fadeIn 0.4s ease' }}>
+                                <div style={{ width: '90px', height: '90px', backgroundColor: '#d1fae5', color: '#059669', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '45px', margin: '0 auto 25px', boxShadow: '0 0 0 10px #ecfdf5' }}>✔</div>
+                                <h2 style={{ color: '#059669', fontSize: '28px', margin: '0 0 10px 0', fontWeight: '800' }}>Thanh toán thành công!</h2>
+                                <p style={{ color: '#6b7280', margin: 0 }}>Hệ thống đã ghi nhận. Cảm ơn bạn!</p>
+                            </div>
+                        )}
+
+                        <style>{`
+                            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                        `}</style>
                     </div>
                 </div>
             )}
