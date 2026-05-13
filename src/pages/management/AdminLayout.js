@@ -20,6 +20,7 @@ const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const menuItems = [
+        { name: "Dashboard", path: "/admin", icon: <LayoutDashboard size={20} /> },
         { name: "Người dùng", path: "/admin/users", icon: <Users size={20} /> },
         { name: "Thiết bị IOT", path: "/admin/iot", icon: <Cpu size={20} /> },
         { name: "Cấu hình giá", path: "/admin/price", icon: <CircleDollarSign size={20} /> },
