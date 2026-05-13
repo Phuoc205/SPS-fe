@@ -9,6 +9,7 @@ import ParkingLotManagement from "../pages/management/parkinglotmanagement";
 import IOTManagement from "../pages/management/IOTmanagement";
 import SlotManagement from "../pages/management/slotmanagement";
 import RevenueReport from "../pages/management/revenuereport";
+import Dashboard from "../pages/management/DashBoard";
 
 const AdminRoutes = () => {
     return (
@@ -21,7 +22,7 @@ const AdminRoutes = () => {
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<div>Dashboard</div>} />
+                <Route index element={<Dashboard />} />
                 <Route path="users" element={<UserManagement />} />
                 <Route path="iot" element={<IOTManagement />} />
                 <Route path="price" element={<ConfigPrice />} />

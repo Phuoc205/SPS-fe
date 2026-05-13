@@ -1,0 +1,204 @@
+/* Tổng quan trang Soát vé */
+.tv-page {
+    min-height: calc(100vh - 80px);
+    background-color: #f8fafc;
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.4s ease;
+}
+
+.tv-container {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Header */
+.tv-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.tv-header h2 {
+    font-size: 1.75rem;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.tv-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* Form Card */
+.tv-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #e2e8f0;
+}
+
+.tv-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.tv-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tv-input-group label {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.9rem;
+}
+
+.tv-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.tv-icon {
+    position: absolute;
+    left: 1rem;
+    color: #94a3b8;
+}
+
+.tv-input-wrapper input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 3rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.tv-input-wrapper input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Nút Submit */
+.tv-submit-btn {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.85rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.tv-submit-btn:hover:not(:disabled) {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.tv-submit-btn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Màn hình kết quả (Animation xuất hiện) */
+.tv-result-card {
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.result-valid {
+    background-color: #f0fdf4;
+    border: 2px solid #22c55e;
+    color: #166534;
+}
+
+.result-valid .result-icon { color: #22c55e; }
+.result-valid h2 { color: #15803d; font-size: 1.5rem; margin: 0; }
+
+.result-invalid {
+    background-color: #fef2f2;
+    border: 2px solid #ef4444;
+    color: #991b1b;
+}
+
+.result-invalid .result-icon { color: #ef4444; }
+.result-invalid h2 { color: #b91c1c; font-size: 1.5rem; margin: 0; }
+
+.result-details p {
+    margin: 0.25rem 0;
+}
+
+.match-info {
+    display: inline-block;
+    margin-top: 0.5rem !important;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* Auth Loading & Denied */
+.tv-loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: #64748b;
+    gap: 1rem;
+}
+
+.tv-spinner {
+    animation: spin 1s linear infinite;
+}
+
+.tv-denied-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tv-denied-card h2 { color: #ef4444; margin: 0; }
+.tv-denied-card p { color: #475569; }
+
+/* Animations */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}

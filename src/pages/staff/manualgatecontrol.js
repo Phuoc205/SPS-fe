@@ -29,7 +29,7 @@ const ManualGateControl = () => {
             const res = await axios.get(API, authHeader);
             setGates(res.data);
         } catch (e) {
-            console.error(e);
+            console.error("Lỗi tải danh sách cổng:", e);
         } finally {
             setLoading(false);
         }
@@ -40,7 +40,7 @@ const ManualGateControl = () => {
             const res = await axios.get(`${API}/logs`, authHeader);
             setLogs(res.data);
         } catch (e) {
-            console.error(e);
+            console.error("Lỗi tải lịch sử:", e);
         }
     };
 
@@ -53,17 +53,15 @@ const ManualGateControl = () => {
         }
 
         try {
+            // SỬA LỖI 2: Đưa staffId và action vào đúng Body theo yêu cầu của Backend
             await axios.post(
                 `${API}/${gate.id}/${action.toLowerCase()}`,
                 {
-                    reason: reason // Body bây giờ chỉ gửi mỗi reason (khớp với DTO của bạn)
+                    reason: reason,
+                    staffId: user?.id || 0, // Đảm bảo truyền số nguyên theo Schema
+                    action: action.toUpperCase()
                 },
-                {
-                    headers: { 
-                        Authorization: `Bearer ${token}`,
-                        staffId: user.id // Đẩy staffId lên Header ở đây
-                    }
-                }
+                authHeader // Chỉ chứa Token, không cần nhét staffId vào header nữa
             );
 
             await fetchGates();
@@ -74,12 +72,6 @@ const ManualGateControl = () => {
             console.error(e);
             alert("Thao tác thất bại!");
         }
-    };
-
-    const getStatusClass = (status) => {
-        if (!status) return "unknown";
-        if (typeof status === "object") status = status.value;
-        return String(status).toLowerCase();
     };
 
     const formatTime = (timeStr) => {
@@ -94,7 +86,7 @@ const ManualGateControl = () => {
     if (loading) return (
         <div className="gate-loading">
             <div className="spinner"></div>
-            <p>Đang tải dữ liệu cổng...</p>
+            <p>Đang tải dữ liệu hệ thống cổng...</p>
         </div>
     );
 
@@ -116,19 +108,22 @@ const ManualGateControl = () => {
                 {/* GATE GRID */}
                 <div className="gate-grid">
                     {gates.map((g) => {
-                        const statusStr = getStatusClass(g.status);
+                        // SỬA LỖI 1: Backend trả về g.opened (boolean) thay vì g.status
+                        const statusStr = g.opened ? "open" : "closed";
+                        
                         return (
                             <div key={g.id} className={`gate-card status-${statusStr}`}>
                                 <div className="gate-card-header">
                                     <div className="gate-icon-wrapper">
                                         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 19V4h-4V3H9v1H5v15H3v2h18v-2h-2zm-6 0H9V5h4v14z"/></svg>
                                     </div>
-                                    <h3>{g.name}</h3>
+                                    {/* Sửa lại hiển thị tên thiết bị và vị trí */}
+                                    <h3>{g.deviceCode} <span>({g.location})</span></h3>
                                 </div>
 
                                 <div className="gate-card-body">
                                     <span className={`status-badge badge-${statusStr}`}>
-                                        {statusStr === "open" ? (
+                                        {g.opened ? (
                                             <><span className="dot dot-green"></span> ĐANG MỞ</>
                                         ) : (
                                             <><span className="dot dot-red"></span> ĐANG ĐÓNG</>
@@ -154,7 +149,7 @@ const ManualGateControl = () => {
                     <div className="gate-modal-overlay fade-in">
                         <div className="gate-modal-box slide-up">
                             <div className="modal-header">
-                                <h3>Điều khiển: <span className="highlight">{selectedGate.name}</span></h3>
+                                <h3>Điều khiển: <span className="highlight">{selectedGate.deviceCode}</span></h3>
                                 <button className="btn-close-icon" onClick={() => setSelectedGate(null)}>✕</button>
                             </div>
                             
@@ -193,10 +188,10 @@ const ManualGateControl = () => {
                         <table className="log-table">
                             <thead>
                                 <tr>
-                                    <th>Cổng</th>
+                                    <th>Cổng (ID)</th>
                                     <th>Hành động</th>
                                     <th>Lý do</th>
-                                    <th>Nhân viên</th>
+                                    <th>Nhân viên (ID)</th>
                                     <th>Thời gian</th>
                                 </tr>
                             </thead>
@@ -206,15 +201,16 @@ const ManualGateControl = () => {
                                 ) : (
                                     logs.map((l) => (
                                         <tr key={l.id}>
-                                            <td className="font-medium">{l.gateId}</td>
+                                            <td className="font-medium">Cổng {l.gateId}</td>
                                             <td>
                                                 <span className={`log-badge ${l.action.toLowerCase() === 'open' ? 'badge-open' : 'badge-closed'}`}>
                                                     {l.action}
                                                 </span>
                                             </td>
                                             <td className="reason-text">{l.reason}</td>
-                                            <td>{l.staffId}</td>
-                                            <td className="time-text">{formatTime(l.timestamp)}</td>
+                                            <td>{l.staffId || "N/A"}</td>
+                                            {/* SỬA LỖI 3: Dùng l.createdAt thay vì l.timestamp */}
+                                            <td className="time-text">{formatTime(l.createdAt)}</td>
                                         </tr>
                                     ))
                                 )}

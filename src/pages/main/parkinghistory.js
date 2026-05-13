@@ -7,7 +7,7 @@ import Header from "../../components/header";
 
 const ParkingHistory = () => {
 
-    const API_URL = "http://localhost:5000";
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const { user, token } = useAuth();
 
@@ -30,7 +30,7 @@ const ParkingHistory = () => {
             try {
 
                 const response = await axios.get(
-                    `${API_URL}/api/history/user/${user.id}`,
+                    `${API_URL}/parking/history/user/${user.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
