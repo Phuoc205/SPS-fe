@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Ticket, Car, Search, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import './css/TicketValidation.css';
 
+const api_url = process.env.REACT_APP_API_URL;
+
 const TicketValidation = () => {
     // Auth State
     const [user, setUser] = useState(null);
@@ -17,7 +19,7 @@ const TicketValidation = () => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const BACKEND_PORT = 5000; 
-    const API_URL = `http://localhost:${BACKEND_PORT}/api/tickets/validate`;
+    const API_URL = `${api_url}/tickets/validate`;
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
