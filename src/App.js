@@ -5,9 +5,9 @@ import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 import Unauthorized from "./components/Unauthorized";
 
-import AdminRoutes from "./routes/AdminRoutes";
-import StaffRoutes from "./routes/StaffRoutes";
-import UserRoutes from "./routes/UserRoutes";
+import AdminRoutes from "./routes/adminroutes";
+import StaffRoutes from "./routes/staffroutes";
+import UserRoutes from "./routes/userroutes";
 import Homepage from "./pages/homepage";
 import { AuthProvider } from "./context/AuthContext";
 
