@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
-import "./css/stafflayout.css";
+import "./css/StaffLayout.css";
 
 const StaffLayout = () => {
     const location = useLocation();

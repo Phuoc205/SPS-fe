@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./css/iotmanagement.css";
+import "./css/IOTmanagement.css";
 
 const api_url = process.env.REACT_APP_API_URL; // Đảm bảo bạn đã cấu hình port 5000 (hoặc port của Spring Boot)
 
