@@ -9,7 +9,7 @@ import ParkingLotManagement from "../pages/management/parkinglotmanagement";
 import IOTManagement from "../pages/management/IOTmanagement";
 import SlotManagement from "../pages/management/slotmanagement";
 import RevenueReport from "../pages/management/revenuereport";
-import Dashboard from "../pages/management/DashBoard";
+import Dashboard from "../pages/management/Dashboard";
 
 const AdminRoutes = () => {
     return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Ticket, Car, Search, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
-import './css/TicketValidation.css';
+import './css/ticketvalidation.css';
 
 const api_url = process.env.REACT_APP_API_URL;
 
